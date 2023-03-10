@@ -1,0 +1,10 @@
+tests/testthat/auth
+docs/reference/senscape_api_key.txt
+
+*api_key*
+
+.Rproj.user
+.Rhistory
+.Rdata
+.httr-oauth
+.DS_Store
