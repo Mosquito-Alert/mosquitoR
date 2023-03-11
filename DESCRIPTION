@@ -7,7 +7,7 @@ Authors@R:
 URL: https://github.com/Mosquito-Alert/mosquitoR
 BugReports: https://github.com/Mosquito-Alert/mosquitoR/issues
 Description: A set of tools for analyzing data associated with the Mosquito Alert citizen science system (http://mosquitoalert.com), including Mosquito Alert citizen science data, smart trap data from the Irideon Senscape API, and traditional mosquito trap data.
-License: GPL + file LICENSE
+License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
