@@ -9,5 +9,5 @@
 make_lonlat_from_samplingcell_ids = function(ids, type){
   if(type == "lon") t = 1
   else if(type == "lat") t = 2
-  return(unlist(lapply(ids, function(id) str_split(id, "_")[[1]][t])))
+  return(unlist(lapply(ids, function(id) stringr::str_split(id, "_")[[1]][t])))
 }
