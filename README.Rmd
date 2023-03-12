@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # mosquitoR
 
 <!-- badges: start -->
-[![Codecov test coverage](https://codecov.io/gh/Mosquito-Alert/mosquitoR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Mosquito-Alert/mosquitoR?branch=main)
+
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data associated with the Mosquito Alert citizen science system (http://mosquitoalert.com), including Mosquito Alert citizen science data, smart trap data from the Irideon Senscape API, and traditional mosquito trap data. 
@@ -36,7 +36,7 @@ Alternatively, if you are using an ssh key to access the private repository, the
 
 ```r
 # install.packages("devtools")
-devtools::git@github.com:Mosquito-Alert/mosquitoR.git
+devtools::install_git(git@github.com:Mosquito-Alert/mosquitoR.git)
 ```
 
 ## Example

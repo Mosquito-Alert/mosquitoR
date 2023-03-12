@@ -4,9 +4,6 @@
 # mosquitoR
 
 <!-- badges: start -->
-
-[![Codecov test
-coverage](https://codecov.io/gh/Mosquito-Alert/mosquitoR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Mosquito-Alert/mosquitoR?branch=main)
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data
@@ -34,7 +31,7 @@ repository, then you can install with:
 
 ``` r
 # install.packages("devtools")
-devtools::git@github.com:Mosquito-Alert/mosquitoR.git
+devtools::install_git(git@github.com:Mosquito-Alert/mosquitoR.git)
 ```
 
 ## Example
