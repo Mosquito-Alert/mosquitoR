@@ -6,6 +6,11 @@
 \usage{
 invstd2(x, d)
 }
+\arguments{
+\item{x}{A numeric vector to be inverse double standardized}
+
+\item{d}{The vector used in the original double standardization.}
+}
 \value{
 A numeric vector.
 }

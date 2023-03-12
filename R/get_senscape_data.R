@@ -8,9 +8,9 @@
 #' @returns A tibble.
 #' @export
 #' @examples
-#' new_smart_trap_data = get_senscape_data(key_path = "senscape_api_key.txt", start_datetime = lubridate::as_datetime("2023-03-08"), end_datetime = lubridate::as_datetime("2023-03-09"))
+#' new_smart_trap_data = get_senscape_data(key_path = "../auth/senscape_api_key.txt", start_datetime = lubridate::as_datetime("2023-03-08"), end_datetime = lubridate::as_datetime("2023-03-09"), deviceIds = c("5f1076c998fda900151ff683", "5f1076c998fda900151ff683", "5f10762e98fda900151ff680", "5f10767c98fda900151ff681", "5f1076ae98fda900151ff682"))
 #' new_smart_trap_data
-get_senscape_data = function(key_path, page_size = 10, start_datetime, end_datetime, deviceIds = c("5f1076c998fda900151ff683", "5f1076c998fda900151ff683", "5f10762e98fda900151ff680", "5f10767c98fda900151ff681", "5f1076ae98fda900151ff682")){
+get_senscape_data = function(key_path, page_size = 10, start_datetime, end_datetime, deviceIds){
 
   httr::set_config(httr::config(ssl_verifypeer = 0L))
 
@@ -27,7 +27,7 @@ get_senscape_data = function(key_path, page_size = 10, start_datetime, end_datet
 
   this_end_datetime = this_start_datetime
 
-  message(paste0("Getting Senscape Data from ", start_datetime, " to ", end_datetime))
+  message(paste0("Gettingjj Senscape Data from ", start_datetime, " to ", end_datetime))
 
   i = 0
   pb <- txtProgressBar(min = 0, max = n_iterations, initial = 0, style = 3)
@@ -78,6 +78,8 @@ get_senscape_data = function(key_path, page_size = 10, start_datetime, end_datet
 
     this_start_datetime = this_end_datetime
 
+    message(paste0("Working on: ", lubridate::as_date(this_start_datetime)))
+    flush.console()
     i = i + 1
     setTxtProgressBar(pb, value = i)
 

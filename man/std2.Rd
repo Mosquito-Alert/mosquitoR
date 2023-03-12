@@ -2,13 +2,16 @@
 % Please edit documentation in R/std2.R
 \name{std2}
 \alias{std2}
-\title{Double-standardize a variable}
+\title{Center and double-standardize a variable}
 \usage{
 std2(x)
+}
+\arguments{
+\item{x}{A numeric vector to be centerd and double standardized.}
 }
 \value{
 A numeric vector.
 }
 \description{
-Double-standardize a variable
+Center and double-standardize a variable
 }
