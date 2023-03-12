@@ -4,6 +4,9 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/LICENSE.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -19,15 +22,24 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/invstd2.html</loc>
+  </url>
+  <url>
     <loc>/reference/make_lonlat_from_samplingcell_ids.html</loc>
   </url>
   <url>
     <loc>/reference/make_mask.html</loc>
   </url>
   <url>
+    <loc>/reference/make_metadata_template.html</loc>
+  </url>
+  <url>
     <loc>/reference/make_samplingcell_ids.html</loc>
   </url>
   <url>
     <loc>/reference/round_down.html</loc>
+  </url>
+  <url>
+    <loc>/reference/std2.html</loc>
   </url>
 </urlset>
