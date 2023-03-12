@@ -31,7 +31,7 @@ repository, then you can install with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_git(git@github.com:Mosquito-Alert/mosquitoR.git)
+devtools::install_git("git@github.com:Mosquito-Alert/mosquitoR.git")
 ```
 
 ## Example

@@ -36,7 +36,7 @@ Alternatively, if you are using an ssh key to access the private repository, the
 
 ```r
 # install.packages("devtools")
-devtools::install_git(git@github.com:Mosquito-Alert/mosquitoR.git)
+devtools::install_git("git@github.com:Mosquito-Alert/mosquitoR.git")
 ```
 
 ## Example
