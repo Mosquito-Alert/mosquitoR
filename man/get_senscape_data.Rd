@@ -9,7 +9,7 @@ get_senscape_data(
   page_size = 10,
   start_datetime,
   end_datetime,
-  deviceIds
+  deviceIds = NA
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ get_senscape_data(
 
 \item{end_datetime}{A datetime object that will be used as the upper bound to filter records.}
 
-\item{deviceIds}{A character vector of all deviceIds from which data should be returned.}
+\item{deviceIds}{A character vector of all deviceIds from which data should be returned. If NA, then data will not be filtered by deviceId.}
 }
 \value{
 A tibble.

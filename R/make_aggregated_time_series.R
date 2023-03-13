@@ -9,12 +9,14 @@
 #' @import magrittr
 #' @import dplyr
 #' @export
-make_aggregated_time_series = function(x, classification, start=NA, end=NA, interval="day"){
+make_aggregated_time_series = function(x, classification="Aedes female", start=NA, end=NA, interval="day", groups = c("trap_ID", "TigacellID")){
+
+  groups_and_date = c("date", groups)
 
   this_start = dplyr::if_else(is.na(start), min(x$date), start)
   this_end = dplyr::if_else(is.na(end), max(x$date), end)
 
-  result = x %>% dplyr::filter(classification %in% classification) %>% dplyr::select(date, trap_ID, TigacellID) %>% dplyr::group_by(date, trap_ID, TigacellID) %>% dplyr::summarise(count = dplyr::n()) %>% dplyr::ungroup() %>% dplyr::group_by(trap_ID, TigacellID) %>% complete(date = seq.Date(this_start, this_end, by=interval), fill=list(count=0)) %>% ungroup() %>% filter(date >= this_start, date <= this_end)
+  result = x %>% dplyr::filter(classification %in% classification) %>% dplyr::group_by_at(groups_and_date) %>% dplyr::summarise(count = dplyr::n()) %>% dplyr::ungroup() %>% dplyr::group_by_at(groups) %>% complete(date = seq.Date(this_start, this_end, by=interval), fill=list(count=0)) %>% ungroup() %>% filter(date >= this_start, date <= this_end)
 
   return(result)
 

@@ -6,10 +6,11 @@
 \usage{
 make_aggregated_time_series(
   x,
-  classification,
+  classification = "Aedes female",
   start = NA,
   end = NA,
-  interval = "day"
+  interval = "day",
+  groups = c("trap_ID", "TigacellID")
 )
 }
 \arguments{
