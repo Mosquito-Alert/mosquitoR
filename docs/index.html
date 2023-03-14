@@ -70,7 +70,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>If you have a github Personal Access Token set up, tou can install the development version of mosquitoR from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>If you have a github Personal Access Token set up, you can install the development version of mosquitoR from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Mosquito-Alert/mosquitoR"</span><span class="op">)</span></span></code></pre></div>
@@ -92,6 +92,65 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Mosquito-Alert/mosquitoR" class="external-link">mosquitoR</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/make_lonlat_from_samplingcell_ids.html">make_lonlat_from_samplingcell_ids</a></span><span class="op">(</span>ids<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2.15_41.35"</span>, <span class="st">"2.10_41.20"</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"lon"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "2.15" "2.10"</span></span></code></pre></div>
+<p>Download smart trap data from the Senscape server using an API key:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Mosquito-Alert/mosquitoR" class="external-link">mosquitoR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org" class="external-link">lubridate</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'lubridate'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     date, intersect, setdiff, union</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># get list of device IDs with names that start with ASPB</span></span>
+<span><span class="va">ASPB_deviceIds</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_devices.html">get_senscape_devices</a></span><span class="op">(</span>key_path <span class="op">=</span> <span class="st">"../auth/senscape_api_key.txt"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith</a></span><span class="op">(</span><span class="va">name</span>, <span class="st">"ASPB"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">`_id`</span><span class="op">)</span></span>
+<span><span class="va">ASPB_deviceIds</span></span>
+<span><span class="co">#&gt; [1] "5f10762e98fda900151ff680" "5f10767c98fda900151ff681"</span></span>
+<span><span class="co">#&gt; [3] "5f1076ae98fda900151ff682" "5f1076c998fda900151ff683"</span></span>
+<span><span class="co">#&gt; [5] "5f1076e798fda900151ff684"</span></span>
+<span></span>
+<span><span class="co"># get all data from these devices within a specified interval</span></span>
+<span><span class="va">my_data</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_data.html">get_senscape_data</a></span><span class="op">(</span>key_path <span class="op">=</span> <span class="st">"../auth/senscape_api_key.txt"</span>, start_datetime <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_datetime</a></span><span class="op">(</span><span class="st">"2023-03-08"</span><span class="op">)</span>, end_datetime <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_datetime</a></span><span class="op">(</span><span class="st">"2023-03-09"</span><span class="op">)</span>, deviceIds <span class="op">=</span> <span class="va">ASPB_deviceIds</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Getting Senscape Data from 2023-03-08 to 2023-03-09</span></span>
+<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%</span></span>
+<span><span class="co">#&gt; Working on: 2023-03-09</span></span>
+<span><span class="co">#&gt;   |                                                                              |======================================================================| 100%</span></span>
+<span><span class="va">my_data</span></span>
+<span><span class="co">#&gt; # A tibble: 241 × 9</span></span>
+<span><span class="co">#&gt;    `_id`             nice_…¹ class…² recor…³ clien…⁴ clien…⁵ proce…⁶   lat   lng</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;             &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 6408cd3a62588276… FILE_1… Culex … 2023-0… ASPB 3… Mosqui… 2023-0…  41.4  2.12</span></span>
+<span><span class="co">#&gt;  2 6407d71a62588276… FILE_1… Test p… 2023-0… ASPB 2… Mosqui… 2023-0…  41.4  2.15</span></span>
+<span><span class="co">#&gt;  3 6407d71c62588276… FILE_1… Test p… 2023-0… ASPB 3… Mosqui… 2023-0…  41.4  2.12</span></span>
+<span><span class="co">#&gt;  4 6407d71bfcadc748… FILE_1… Test p… 2023-0… ASPB 1… Mosqui… 2023-0…  41.4  2.19</span></span>
+<span><span class="co">#&gt;  5 6407d71d1969a50b… FILE_1… Test p… 2023-0… ASPB 5… Mosqui… 2023-0…  41.4  2.19</span></span>
+<span><span class="co">#&gt;  6 6407d71c1969a50b… FILE_1… Test p… 2023-0… ASPB 4… Mosqui… 2023-0…  41.4  2.15</span></span>
+<span><span class="co">#&gt;  7 6407de2362588276… FILE_1… Test p… 2023-0… ASPB 1… Mosqui… 2023-0…  41.4  2.19</span></span>
+<span><span class="co">#&gt;  8 6407de22fcadc748… FILE_1… Test p… 2023-0… ASPB 3… Mosqui… 2023-0…  41.4  2.12</span></span>
+<span><span class="co">#&gt;  9 6407de22a511e19f… FILE_1… Test p… 2023-0… ASPB 2… Mosqui… 2023-0…  41.4  2.15</span></span>
+<span><span class="co">#&gt; 10 6407de2a1969a50b… FILE_1… Test p… 2023-0… ASPB 5… Mosqui… 2023-0…  41.4  2.19</span></span>
+<span><span class="co">#&gt; # … with 231 more rows, and abbreviated variable names ¹​nice_name,</span></span>
+<span><span class="co">#&gt; #   ²​classification, ³​record_time, ⁴​client_name, ⁵​client_type, ⁶​processed</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
+</h2>
+<p>Once this repository is public, we will have an easy link for viewing the html documentation. For now, the best way to view it is to clone this repository and then open <code>docs/index.html</code> in your browser.</p>
+</div>
+<div class="section level2">
+<h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
+</h2>
+<p>If you want to contribute new functions, fix bugs, add documentation or tests, etc., please do so on the <code>dev</code> branch. We are developing this package using <code>devtools</code> and <code>testthat</code> and doing our best to follow the guidelines and styles laid out in <a href="https://r-pkgs.org" class="external-link uri">https://r-pkgs.org</a>.</p>
 <!-- What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so: --><!-- ```{r cars} --><!-- summary(cars) --><!-- ``` --><!-- You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>. --><!-- You can also embed plots, for example: --><!-- ```{r pressure, echo = FALSE} --><!-- plot(pressure) --><!-- ``` --><!-- In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN. -->
 </div>
 </div>
