@@ -59,9 +59,9 @@ Download smart trap data from the Senscape server using an API key:
 
 ```{r example3}
 library(mosquitoR)
-library(lubridate, quietly = TRUE)
-library(dplyr, quietly = TRUE)
-library(magrittr, quietly = TRUE)
+library(lubridate)
+library(dplyr)
+library(magrittr)
 
 # get list of device IDs with names that start with ASPB
 ASPB_deviceIds = get_senscape_devices(key_path = "../auth/senscape_api_key.txt") %>% filter(startsWith(name, "ASPB")) %>% pull(`_id`)

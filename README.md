@@ -58,13 +58,13 @@ Download smart trap data from the Senscape server using an API key:
 
 ``` r
 library(mosquitoR)
-library(lubridate, quietly = TRUE)
+library(lubridate)
 #> 
 #> Attaching package: 'lubridate'
 #> The following objects are masked from 'package:base':
 #> 
 #>     date, intersect, setdiff, union
-library(dplyr, quietly = TRUE)
+library(dplyr)
 #> 
 #> Attaching package: 'dplyr'
 #> The following objects are masked from 'package:stats':
@@ -73,7 +73,7 @@ library(dplyr, quietly = TRUE)
 #> The following objects are masked from 'package:base':
 #> 
 #>     intersect, setdiff, setequal, union
-library(magrittr, quietly = TRUE)
+library(magrittr)
 
 # get list of device IDs with names that start with ASPB
 ASPB_deviceIds = get_senscape_devices(key_path = "../auth/senscape_api_key.txt") %>% filter(startsWith(name, "ASPB")) %>% pull(`_id`)
