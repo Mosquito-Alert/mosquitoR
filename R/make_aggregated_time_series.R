@@ -18,6 +18,8 @@ make_aggregated_time_series = function(x, classification="Aedes female", start=N
 
   result = x %>% dplyr::filter(classification %in% classification) %>% dplyr::group_by_at(groups_and_date) %>% dplyr::summarise(count = dplyr::n()) %>% dplyr::ungroup() %>% dplyr::group_by_at(groups) %>% complete(date = seq.Date(this_start, this_end, by=interval), fill=list(count=0)) %>% ungroup() %>% filter(date >= this_start, date <= this_end)
 
+  # TODO add pulses now
+
   return(result)
 
 }

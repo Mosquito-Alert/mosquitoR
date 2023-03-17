@@ -33,8 +33,8 @@ get_senscape_data = function(key_path, page_size = 10, start_datetime, end_datet
 
   message(paste0("Getting Senscape Data from ", start_datetime, " to ", end_datetime))
 
-  i = 0
-  pb <- txtProgressBar(min = 0, max = n_iterations, initial = 0, style = 3)
+i = 0
+pb <- txtProgressBar(min = 0, max = n_iterations, initial = 0, style = 3)
 
   while(this_end_datetime < end_datetime){
 
@@ -82,13 +82,14 @@ get_senscape_data = function(key_path, page_size = 10, start_datetime, end_datet
 
     this_start_datetime = this_end_datetime
 
-    message(paste0("Working on: ", lubridate::as_date(this_start_datetime)))
+    cat("\r", "Working on: ", lubridate::year(this_start_datetime))
     flush.console()
+
     i = i + 1
     setTxtProgressBar(pb, value = i)
 
   }
-  close(pb)
+#  close(pb)
 
   # taking only distinct rows now because there are a small number of records that end up being duplicated. This appears to happen because, despite what the API documentation says, filterStart seems to give records greater than or equal to the date, not just greater than it. So there are a small number of records that fall exactly at the of the filter range in one iteration through the loop and then get picked up at the beginning of the range in the next iteration.
   final_result = dplyr::distinct(final_result)
