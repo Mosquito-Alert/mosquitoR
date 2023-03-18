@@ -23,4 +23,5 @@ Imports:
     readr,
     dplyr,
     stringr,
-    magrittr
+    magrittr,
+    tidyr
