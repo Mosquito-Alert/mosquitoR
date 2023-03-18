@@ -35,13 +35,11 @@ get_senscape_data = function(key_path, page_size = 10, start_datetime, end_datet
 
 i = 0
 pb <- txtProgressBar(min = 0, max = n_iterations, initial = 0, style = 3)
+flush.console()
 
   while(this_end_datetime < end_datetime){
 
     this_end_datetime = min(this_start_datetime + lubridate::days(chunksize_days), end_datetime)
-
-    #  print(this_end_datetime)
-    #  flush.console()
 
     start = lubridate::stamp("2021-09-22T00:00:00.000Z", orders = "%Y-%Om-%dT%H:%M:%OS3Z", exact = TRUE, quiet = TRUE)(lubridate::with_tz(this_start_datetime, "UTC"))
 
@@ -56,9 +54,8 @@ pb <- txtProgressBar(min = 0, max = n_iterations, initial = 0, style = 3)
     total_pages = (as.integer(sense_data_count/page_size)+1)
 
     this_smart_trap_data = dplyr::bind_rows(lapply(0:total_pages, function(i){
-      # print(paste0("targets page ", i, " of ", total_pages))
-      #  flush.console()
-      data_req <- httr::GET(paste0(this_query, "&pageNumber=", i, "&pageSize=", page_size), httr::add_headers('authorization' = readr::read_lines(key_path)))
+
+            data_req <- httr::GET(paste0(this_query, "&pageNumber=", i, "&pageSize=", page_size), httr::add_headers('authorization' = readr::read_lines(key_path)))
       tibble::as_tibble(jsonlite::fromJSON(httr::content(data_req, "text"))$samples)
     }))
 
@@ -72,9 +69,8 @@ pb <- txtProgressBar(min = 0, max = n_iterations, initial = 0, style = 3)
     total_pages = (as.integer(sense_data_count/page_size)+1)
 
     this_smart_trap_data_pulses = dplyr::bind_rows(lapply(0:total_pages, function(i){
-      #    print(paste0("pulses page ", i, " of ", total_pages))
-      #    flush.console()
-      data_req <- httr::GET(paste0(this_query_pulses, "&pageNumber=", i, "&pageSize=", page_size), httr::add_headers('authorization' = readr::read_lines(key_path)))
+
+            data_req <- httr::GET(paste0(this_query_pulses, "&pageNumber=", i, "&pageSize=", page_size), httr::add_headers('authorization' = readr::read_lines(key_path)))
       tibble::as_tibble(jsonlite::fromJSON(httr::content(data_req, "text"))$samples)
     }))
 
@@ -82,14 +78,12 @@ pb <- txtProgressBar(min = 0, max = n_iterations, initial = 0, style = 3)
 
     this_start_datetime = this_end_datetime
 
-    cat("\r", "Working on: ", lubridate::year(this_start_datetime))
-    flush.console()
-
     i = i + 1
     setTxtProgressBar(pb, value = i)
+    flush.console()
 
   }
-#  close(pb)
+  close(pb)
 
   # taking only distinct rows now because there are a small number of records that end up being duplicated. This appears to happen because, despite what the API documentation says, filterStart seems to give records greater than or equal to the date, not just greater than it. So there are a small number of records that fall exactly at the of the filter range in one iteration through the loop and then get picked up at the beginning of the range in the next iteration.
   final_result = dplyr::distinct(final_result)
