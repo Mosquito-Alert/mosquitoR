@@ -2,11 +2,10 @@
 % Please edit documentation in R/make_aggregated_time_series.R
 \name{make_aggregated_time_series}
 \alias{make_aggregated_time_series}
-\title{Make complete time series aggregated by a given interval. TODO: WE NEED TO MAKE THIS MORE GENERAL STILL}
+\title{Make complete time series aggregated by a given interval}
 \usage{
 make_aggregated_time_series(
   x,
-  classification = "Aedes female",
   start = NA,
   end = NA,
   interval = "day",
@@ -15,8 +14,6 @@ make_aggregated_time_series(
 }
 \arguments{
 \item{x}{A tibble containing exact datetimes for mosquito captures.}
-
-\item{classification}{A character vector of the classifications to be used. (The tibble will be filtered for these and the final counts will be for all captures with any of these classifications).}
 
 \item{start}{A date or datetime object that will be used as the lower bound to filter records.}
 
@@ -28,5 +25,5 @@ make_aggregated_time_series(
 A tibble.
 }
 \description{
-Make complete time series aggregated by a given interval. TODO: WE NEED TO MAKE THIS MORE GENERAL STILL
+Make complete time series aggregated by a given interval
 }
