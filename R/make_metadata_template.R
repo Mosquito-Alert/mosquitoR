@@ -18,7 +18,7 @@
 #' @export
 make_metadata_template = function(type="Dataset", name="", description="", conditions_of_access="", url="", same_as="", identifier="", license="", citation="", measurement_technique = "", temporal_coverage = "", creator = "", variable_info, distribution) {
 
-  result = parse_json(paste0('{
+  result = jsontools::parse_json(paste0('{
 "@context": {
     "@vocab": "https://schema.org/",
     "qudt": "http://qudt.org/schema/qudt/",

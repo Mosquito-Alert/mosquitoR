@@ -20,6 +20,8 @@ make_aggregated_time_series(
 \item{end}{A date or datetime object that will be used as the upper bound to filter records.}
 
 \item{interval}{A string representing the interval over which data should be aggregated. Could be any string allowed by seq.Date.}
+
+\item{groups}{A character vector representing the grouping variables to be included in the output.}
 }
 \value{
 A tibble.

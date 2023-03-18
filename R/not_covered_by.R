@@ -4,4 +4,4 @@
 #' @param y Object used for filtering.
 #' @returns Boolean.
 #' @export
-not_covered_by = function(x, y) !st_covered_by(x, y)
+not_covered_by = function(x, y) !sf::st_covered_by(x, y)
