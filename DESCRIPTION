@@ -24,4 +24,8 @@ Imports:
     dplyr,
     stringr,
     magrittr,
-    tidyr
+    tidyr,
+    utils,
+    stats,
+    jsontools,
+    sf
