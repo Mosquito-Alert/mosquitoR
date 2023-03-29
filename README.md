@@ -12,8 +12,7 @@ associated with the Mosquito Alert citizen science system
 data, smart trap data from the Irideon Senscape API, and traditional
 mosquito trap data.
 
-This repository is currently private during the initial development
-phase but will soon be made public.
+IMPORTANT: This package is at an early stage of development, and we may introduce "breaking" changes. In addition, please note that while the package contains functions for working with the Idideon Senscape API, it is not developed by Irideon and is not an official Irideon package.
 
 ## Installation
 
