@@ -17,26 +17,20 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 
+[![Codecov test coverage](https://codecov.io/gh/Mosquito-Alert/mosquitoR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Mosquito-Alert/mosquitoR?branch=main)
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data associated with the Mosquito Alert citizen science system (http://mosquitoalert.com), including Mosquito Alert citizen science data, smart trap data from the Irideon Senscape API, and traditional mosquito trap data. 
 
-This repository is currently private during the initial development phase but will soon be made public.
+IMPORTANT: This package is at an early stage of development, and we may introduce "breaking" changes. In addition, please note that while the package contains functions for working with the Irideon Senscape API, it is not developed by Irideon and is not an official Irideon package.
 
 ## Installation
 
-If you have a github Personal Access Token set up, you can install the development version of mosquitoR from [GitHub](https://github.com/) with:
+You can install the development version of mosquitoR from [GitHub](https://github.com/) as follows:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("Mosquito-Alert/mosquitoR")
-```
-
-Alternatively, if you are using an ssh key to access the private repository, then you can install with:
-
-```r
-# install.packages("devtools")
-devtools::install_git("git@github.com:Mosquito-Alert/mosquitoR.git")
 ```
 
 ## Example

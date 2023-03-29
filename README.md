@@ -4,6 +4,9 @@
 # mosquitoR
 
 <!-- badges: start -->
+
+[![Codecov test
+coverage](https://codecov.io/gh/Mosquito-Alert/mosquitoR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Mosquito-Alert/mosquitoR?branch=main)
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data
@@ -12,11 +15,15 @@ associated with the Mosquito Alert citizen science system
 data, smart trap data from the Irideon Senscape API, and traditional
 mosquito trap data.
 
-IMPORTANT: This package is at an early stage of development, and we may introduce "breaking" changes. In addition, please note that while the package contains functions for working with the Irideon Senscape API, it is not developed by Irideon and is not an official Irideon package.
+IMPORTANT: This package is at an early stage of development, and we may
+introduce “breaking” changes. In addition, please note that while the
+package contains functions for working with the Irideon Senscape API, it
+is not developed by Irideon and is not an official Irideon package.
 
 ## Installation
 
-You can install the development version of mosquitoR from [GitHub](https://github.com/) with:
+You can install the development version of mosquitoR from
+[GitHub](https://github.com/) as follows:
 
 ``` r
 # install.packages("devtools")
@@ -67,16 +74,14 @@ library(magrittr)
 # get list of device IDs with names that start with ASPB
 ASPB_deviceIds = get_senscape_devices(key_path = "../auth/senscape_api_key.txt") %>% filter(startsWith(name, "ASPB")) %>% pull(`_id`)
 ASPB_deviceIds
-#> [1] "5f10762e98fda900151ff680" "5f10767c98fda900151ff681"
-#> [3] "5f1076ae98fda900151ff682" "5f1076c998fda900151ff683"
-#> [5] "5f1076e798fda900151ff684"
+#> [1] "5f10767c98fda900151ff681" "5f10762e98fda900151ff680"
+#> [3] "5f1076e798fda900151ff684" "5f1076ae98fda900151ff682"
+#> [5] "5f1076c998fda900151ff683"
 
 # get all data from these devices within a specified interval
 my_data = get_senscape_data(key_path = "../auth/senscape_api_key.txt", start_datetime = as_datetime("2023-03-08"), end_datetime = as_datetime("2023-03-09"), deviceIds = ASPB_deviceIds)
 #> Getting Senscape Data from 2023-03-08 to 2023-03-09
-#>   |                                                                              |                                                                      |   0%
-#> Working on: 2023-03-09
-#>   |                                                                              |======================================================================| 100%
+#>   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 my_data
 #> # A tibble: 241 × 9
 #>    `_id`             nice_…¹ class…² recor…³ clien…⁴ clien…⁵ proce…⁶   lat   lng
