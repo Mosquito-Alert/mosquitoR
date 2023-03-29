@@ -4,7 +4,8 @@ Version: 0.0.0.9000
 Authors@R: c(
     person("John", "Palmer", email="john.palmer@upf.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-2648-7860")),
     person("Otis", "Johnson", email="otis.johnson@upf.edu", role = "aut"))
-URL: https://github.com/Mosquito-Alert/mosquitoR
+URL: https://github.com/Mosquito-Alert/mosquitoR,
+    https://mosquito-alert.github.io/mosquitoR/
 BugReports: https://github.com/Mosquito-Alert/mosquitoR/issues
 Description: A set of tools for analyzing data associated with the Mosquito Alert citizen science system (http://mosquitoalert.com), including Mosquito Alert citizen science data, smart trap data from the Irideon Senscape API, and traditional mosquito trap data.
 License: GPL (>= 3)
