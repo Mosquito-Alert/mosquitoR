@@ -4,11 +4,6 @@
 # mosquitoR
 
 <!-- badges: start -->
-
-[![Codecov test
-coverage](https://codecov.io/gh/Mosquito-Alert/mosquitoR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Mosquito-Alert/mosquitoR?branch=main)
-
-[![Documentation](https://img.shields.io/static/v1?label=Documentation&message=Documentation&color=informational)](https://mosquito-alert.github.io/mosquitoR/)
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data
