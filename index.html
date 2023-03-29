@@ -62,6 +62,7 @@
 </h1></div>
 <!-- badges: start -->
 
+<p>[<img src="https://img.shields.io/static/v1?label=Documentation&amp;message=Documentation&amp;color=informational" alt="Documentation">(<a href="https://mosquito-alert.github.io/mosquitoR/" class="uri">https://mosquito-alert.github.io/mosquitoR/</a>) <!-- badges: end --></p>
 <p>The goal of mosquitoR is provide to set of tools for analyzing data associated with the Mosquito Alert citizen science system (<a href="http://mosquitoalert.com" class="external-link uri">http://mosquitoalert.com</a>), including Mosquito Alert citizen science data, smart trap data from the Irideon Senscape API, and traditional mosquito trap data.</p>
 <p>IMPORTANT: This package is at an early stage of development, and we may introduce “breaking” changes. In addition, please note that while the package contains functions for working with the Irideon Senscape API, it is not developed by Irideon and is not an official Irideon package.</p>
 <div class="section level2">
@@ -108,9 +109,9 @@
 <span><span class="co"># get list of device IDs with names that start with ASPB</span></span>
 <span><span class="va">ASPB_deviceIds</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_devices.html">get_senscape_devices</a></span><span class="op">(</span>key_path <span class="op">=</span> <span class="st">"../auth/senscape_api_key.txt"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith</a></span><span class="op">(</span><span class="va">name</span>, <span class="st">"ASPB"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">`_id`</span><span class="op">)</span></span>
 <span><span class="va">ASPB_deviceIds</span></span>
-<span><span class="co">#&gt; [1] "5f10767c98fda900151ff681" "5f10762e98fda900151ff680"</span></span>
-<span><span class="co">#&gt; [3] "5f1076e798fda900151ff684" "5f1076ae98fda900151ff682"</span></span>
-<span><span class="co">#&gt; [5] "5f1076c998fda900151ff683"</span></span>
+<span><span class="co">#&gt; [1] "5f10762e98fda900151ff680" "5f1076c998fda900151ff683"</span></span>
+<span><span class="co">#&gt; [3] "5f1076ae98fda900151ff682" "5f1076e798fda900151ff684"</span></span>
+<span><span class="co">#&gt; [5] "5f10767c98fda900151ff681"</span></span>
 <span></span>
 <span><span class="co"># get all data from these devices within a specified interval</span></span>
 <span><span class="va">my_data</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_data.html">get_senscape_data</a></span><span class="op">(</span>key_path <span class="op">=</span> <span class="st">"../auth/senscape_api_key.txt"</span>, start_datetime <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_datetime</a></span><span class="op">(</span><span class="st">"2023-03-08"</span><span class="op">)</span>, end_datetime <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_datetime</a></span><span class="op">(</span><span class="st">"2023-03-09"</span><span class="op">)</span>, deviceIds <span class="op">=</span> <span class="va">ASPB_deviceIds</span><span class="op">)</span></span>
