@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 [![Codecov test coverage](https://codecov.io/gh/Mosquito-Alert/mosquitoR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Mosquito-Alert/mosquitoR?branch=main)
 
-[![Documentation](https://img.shields.io/static/v1?label=Documentation&message=Documentation&color=informational)(https://mosquito-alert.github.io/mosquitoR/)
+[![Documentation](https://img.shields.io/static/v1?label=Documentation&message=Documentation&color=informational)](https://mosquito-alert.github.io/mosquitoR/)
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data associated with the Mosquito Alert citizen science system (http://mosquitoalert.com), including Mosquito Alert citizen science data, smart trap data from the Irideon Senscape API, and traditional mosquito trap data. 
@@ -71,7 +71,7 @@ my_data
 
 ## Documentation
 
-Once this repository is public, we will have an easy link for viewing the html documentation. For now, the best way to view it is to clone this repository and then open `docs/index.html` in your browser.
+Online documentation can be found at https://mosquito-alert.github.io/mosquitoR/.
 
 ## Contributing
 
