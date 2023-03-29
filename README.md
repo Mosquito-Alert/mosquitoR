@@ -16,21 +16,11 @@ IMPORTANT: This package is at an early stage of development, and we may introduc
 
 ## Installation
 
-If you have a github Personal Access Token set up, you can install the
-development version of mosquitoR from [GitHub](https://github.com/)
-with:
+You can install the development version of mosquitoR from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("Mosquito-Alert/mosquitoR")
-```
-
-Alternatively, if you are using an ssh key to access the private
-repository, then you can install with:
-
-``` r
-# install.packages("devtools")
-devtools::install_git("git@github.com:Mosquito-Alert/mosquitoR.git")
 ```
 
 ## Example
