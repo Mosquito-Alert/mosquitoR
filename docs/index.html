@@ -61,6 +61,7 @@
 <div class="page-header"><h1 id="mosquitor">mosquitoR<a class="anchor" aria-label="anchor" href="#mosquitor"></a>
 </h1></div>
 <!-- badges: start -->
+<p><a href="https://mosquito-alert.github.io/mosquitoR/"><img src="https://img.shields.io/static/v1?label=Documentation&amp;message=Documentation&amp;color=informational" alt="Documentation"></a> <!-- badges: end --></p>
 <p>The goal of mosquitoR is provide to set of tools for analyzing data associated with the Mosquito Alert citizen science system (<a href="http://mosquitoalert.com" class="external-link uri">http://mosquitoalert.com</a>), including Mosquito Alert citizen science data, smart trap data from the Irideon Senscape API, and traditional mosquito trap data.</p>
 <p>IMPORTANT: This package is at an early stage of development, and we may introduce “breaking” changes. In addition, please note that while the package contains functions for working with the Irideon Senscape API, it is not developed by Irideon and is not an official Irideon package.</p>
 <div class="section level2">
@@ -76,17 +77,17 @@
 </h2>
 <p>Turn a set of latitude and longitude coordinates into the standardized sampling cell IDs use to organize Mosquito Alert’s anonymous background tracks:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">mosquitoR</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Mosquito-Alert/mosquitoR" class="external-link">mosquitoR</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/make_samplingcell_ids.html">make_samplingcell_ids</a></span><span class="op">(</span>lon<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.1686</span>, <span class="fl">2.1032</span><span class="op">)</span>, lat<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">41.3874</span>, <span class="fl">41.2098</span><span class="op">)</span>, mask<span class="op">=</span><span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "2.15_41.35" "2.1_41.2"</span></span></code></pre></div>
 <p>Extract longitudes from a set of sampling cell IDs:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">mosquitoR</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Mosquito-Alert/mosquitoR" class="external-link">mosquitoR</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/make_lonlat_from_samplingcell_ids.html">make_lonlat_from_samplingcell_ids</a></span><span class="op">(</span>ids<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2.15_41.35"</span>, <span class="st">"2.10_41.20"</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"lon"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "2.15" "2.10"</span></span></code></pre></div>
 <p>Download smart trap data from the Senscape server using an API key:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">mosquitoR</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Mosquito-Alert/mosquitoR" class="external-link">mosquitoR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org" class="external-link">lubridate</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'lubridate'</span></span>
@@ -105,11 +106,11 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># get list of device IDs with names that start with ASPB</span></span>
-<span><span class="va">ASPB_deviceIds</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_devices.html">get_senscape_devices</a></span><span class="op">(</span>key_path <span class="op">=</span> <span class="st">"../auth/senscape_api_key.txt"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith</a></span><span class="op">(</span><span class="va">name</span>, <span class="st">"ASPB"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">pull</span><span class="op">(</span><span class="va">`_id`</span><span class="op">)</span></span>
+<span><span class="va">ASPB_deviceIds</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_devices.html">get_senscape_devices</a></span><span class="op">(</span>key_path <span class="op">=</span> <span class="st">"../auth/senscape_api_key.txt"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith</a></span><span class="op">(</span><span class="va">name</span>, <span class="st">"ASPB"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">`_id`</span><span class="op">)</span></span>
 <span><span class="va">ASPB_deviceIds</span></span>
-<span><span class="co">#&gt; [1] "5f10767c98fda900151ff681" "5f10762e98fda900151ff680"</span></span>
-<span><span class="co">#&gt; [3] "5f1076e798fda900151ff684" "5f1076ae98fda900151ff682"</span></span>
-<span><span class="co">#&gt; [5] "5f1076c998fda900151ff683"</span></span>
+<span><span class="co">#&gt; [1] "5f10762e98fda900151ff680" "5f1076e798fda900151ff684"</span></span>
+<span><span class="co">#&gt; [3] "5f10767c98fda900151ff681" "5f1076c998fda900151ff683"</span></span>
+<span><span class="co">#&gt; [5] "5f1076ae98fda900151ff682"</span></span>
 <span></span>
 <span><span class="co"># get all data from these devices within a specified interval</span></span>
 <span><span class="va">my_data</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_data.html">get_senscape_data</a></span><span class="op">(</span>key_path <span class="op">=</span> <span class="st">"../auth/senscape_api_key.txt"</span>, start_datetime <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_datetime</a></span><span class="op">(</span><span class="st">"2023-03-08"</span><span class="op">)</span>, end_datetime <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_datetime</a></span><span class="op">(</span><span class="st">"2023-03-09"</span><span class="op">)</span>, deviceIds <span class="op">=</span> <span class="va">ASPB_deviceIds</span><span class="op">)</span></span>
@@ -135,7 +136,7 @@
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
-<p>Once this repository is public, we will have an easy link for viewing the html documentation. For now, the best way to view it is to clone this repository and then open <code>docs/index.html</code> in your browser.</p>
+<p>Online documentation can be found at <a href="https://mosquito-alert.github.io/mosquitoR/" class="uri">https://mosquito-alert.github.io/mosquitoR/</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
