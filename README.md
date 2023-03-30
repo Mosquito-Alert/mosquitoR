@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![Documentation](https://img.shields.io/static/v1?label=Documentation&color=informational)](https://mosquito-alert.github.io/mosquitoR/)
+[![Documentation](https://img.shields.io/static/v1?label=Documentation&message=html&color=informational)](https://mosquito-alert.github.io/mosquitoR/)
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data
