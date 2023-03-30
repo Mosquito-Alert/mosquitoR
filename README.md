@@ -6,6 +6,7 @@
 <!-- badges: start -->
 
 [![Documentation](https://img.shields.io/static/v1?label=Documentation&message=html&color=informational)](https://mosquito-alert.github.io/mosquitoR/)
+[![R-CMD-check](https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data
@@ -73,8 +74,8 @@ library(magrittr)
 # get list of device IDs with names that start with ASPB
 ASPB_deviceIds = get_senscape_devices(key_path = "../auth/senscape_api_key.txt") %>% filter(startsWith(name, "ASPB")) %>% pull(`_id`)
 ASPB_deviceIds
-#> [1] "5f10762e98fda900151ff680" "5f1076e798fda900151ff684"
-#> [3] "5f10767c98fda900151ff681" "5f1076ae98fda900151ff682"
+#> [1] "5f10762e98fda900151ff680" "5f10767c98fda900151ff681"
+#> [3] "5f1076ae98fda900151ff682" "5f1076e798fda900151ff684"
 #> [5] "5f1076c998fda900151ff683"
 
 # get all data from these devices within a specified interval
