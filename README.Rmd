@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # mosquitoR
 
 <!-- badges: start -->
-
+[![Documentation](https://img.shields.io/static/v1?label=Documentation&color=informational)](https://mosquito-alert.github.io/mosquitoR/)
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data associated with the Mosquito Alert citizen science system (http://mosquitoalert.com), including Mosquito Alert citizen science data, smart trap data from the Irideon Senscape API, and traditional mosquito trap data. 
