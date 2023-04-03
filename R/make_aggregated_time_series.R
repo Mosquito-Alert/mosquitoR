@@ -14,8 +14,14 @@ make_aggregated_time_series = function(x, start=NA, end=NA, interval="day", grou
   groups = c(groups, "classification")
   groups_and_date = c("date", "classification", groups)
 
-  this_start = dplyr::if_else(is.na(start), min(x$date), start)
-  this_end = dplyr::if_else(is.na(end), max(x$date), end)
+  this_start = min(x$date)
+  this_end = max(x$date)
+  if(!is.na(start) && class(start) == "Date"){
+    this_start = start
+  }
+  if(!is.na(end) && class(end) == "Date"){
+    this_end = end
+  }
 
   result = x %>% dplyr::group_by_at(groups_and_date) %>% dplyr::summarise(count = dplyr::n()) %>% dplyr::ungroup() %>% dplyr::group_by_at(groups) %>% tidyr::complete(date = seq.Date(this_start, this_end, by=interval), fill=list(count=0)) %>% ungroup() %>% filter(date >= this_start, date <= this_end) %>% tidyr::pivot_wider(names_from = classification, values_from = count)
 
