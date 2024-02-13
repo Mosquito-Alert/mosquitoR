@@ -104,34 +104,37 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://keyring.r-lib.org/" class="external-link">keyring</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">SENSCAPE_API_KEY</span> <span class="op">=</span> <span class="fu"><a href="https://keyring.r-lib.org/reference/key_get.html" class="external-link">key_get</a></span><span class="op">(</span><span class="st">"SENSCAPE_API_KEY"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># get list of device IDs with names that start with ASPB</span></span>
-<span><span class="va">ASPB_deviceIds</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_devices.html">get_senscape_devices</a></span><span class="op">(</span>key_path <span class="op">=</span> <span class="st">"../auth/senscape_api_key.txt"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith</a></span><span class="op">(</span><span class="va">name</span>, <span class="st">"ASPB"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">`_id`</span><span class="op">)</span></span>
+<span><span class="va">ASPB_deviceIds</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_devices.html">get_senscape_devices</a></span><span class="op">(</span>api_key <span class="op">=</span> <span class="va">SENSCAPE_API_KEY</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith</a></span><span class="op">(</span><span class="va">name</span>, <span class="st">"ASPB"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">`_id`</span><span class="op">)</span></span>
 <span><span class="va">ASPB_deviceIds</span></span>
-<span><span class="co">#&gt; [1] "5f1076e798fda900151ff684" "5f10762e98fda900151ff680"</span></span>
-<span><span class="co">#&gt; [3] "5f10767c98fda900151ff681" "5f1076c998fda900151ff683"</span></span>
-<span><span class="co">#&gt; [5] "5f1076ae98fda900151ff682"</span></span>
+<span><span class="co">#&gt; [1] "5f1076e798fda900151ff684" "5f1076ae98fda900151ff682"</span></span>
+<span><span class="co">#&gt; [3] "5f10762e98fda900151ff680" "5f10767c98fda900151ff681"</span></span>
+<span><span class="co">#&gt; [5] "5f1076c998fda900151ff683"</span></span>
 <span></span>
 <span><span class="co"># get all data from these devices within a specified interval</span></span>
-<span><span class="va">my_data</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_data.html">get_senscape_data</a></span><span class="op">(</span>key_path <span class="op">=</span> <span class="st">"../auth/senscape_api_key.txt"</span>, start_datetime <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_datetime</a></span><span class="op">(</span><span class="st">"2023-03-08"</span><span class="op">)</span>, end_datetime <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_datetime</a></span><span class="op">(</span><span class="st">"2023-03-09"</span><span class="op">)</span>, deviceIds <span class="op">=</span> <span class="va">ASPB_deviceIds</span><span class="op">)</span></span>
+<span><span class="va">my_data</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_data.html">get_senscape_data</a></span><span class="op">(</span>api_key <span class="op">=</span> <span class="va">SENSCAPE_API_KEY</span>, start_datetime <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_datetime</a></span><span class="op">(</span><span class="st">"2023-03-08"</span><span class="op">)</span>, end_datetime <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_datetime</a></span><span class="op">(</span><span class="st">"2023-03-09"</span><span class="op">)</span>, deviceIds <span class="op">=</span> <span class="va">ASPB_deviceIds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Getting Senscape Data from 2023-03-08 to 2023-03-09</span></span>
 <span><span class="co">#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%</span></span>
 <span><span class="va">my_data</span></span>
-<span><span class="co">#&gt; # A tibble: 241 × 9</span></span>
-<span><span class="co">#&gt;    `_id`             nice_…¹ class…² recor…³ clien…⁴ clien…⁵ proce…⁶   lat   lng</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;             &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1 6408cd3a62588276… FILE_1… Culex … 2023-0… ASPB 3… Mosqui… 2023-0…  41.4  2.12</span></span>
-<span><span class="co">#&gt;  2 6407d71a62588276… FILE_1… Test p… 2023-0… ASPB 2… Mosqui… 2023-0…  41.4  2.15</span></span>
-<span><span class="co">#&gt;  3 6407d71c62588276… FILE_1… Test p… 2023-0… ASPB 3… Mosqui… 2023-0…  41.4  2.12</span></span>
-<span><span class="co">#&gt;  4 6407d71bfcadc748… FILE_1… Test p… 2023-0… ASPB 1… Mosqui… 2023-0…  41.4  2.19</span></span>
-<span><span class="co">#&gt;  5 6407d71d1969a50b… FILE_1… Test p… 2023-0… ASPB 5… Mosqui… 2023-0…  41.4  2.19</span></span>
-<span><span class="co">#&gt;  6 6407d71c1969a50b… FILE_1… Test p… 2023-0… ASPB 4… Mosqui… 2023-0…  41.4  2.15</span></span>
-<span><span class="co">#&gt;  7 6407de2362588276… FILE_1… Test p… 2023-0… ASPB 1… Mosqui… 2023-0…  41.4  2.19</span></span>
-<span><span class="co">#&gt;  8 6407de22fcadc748… FILE_1… Test p… 2023-0… ASPB 3… Mosqui… 2023-0…  41.4  2.12</span></span>
-<span><span class="co">#&gt;  9 6407de22a511e19f… FILE_1… Test p… 2023-0… ASPB 2… Mosqui… 2023-0…  41.4  2.15</span></span>
-<span><span class="co">#&gt; 10 6407de2a1969a50b… FILE_1… Test p… 2023-0… ASPB 5… Mosqui… 2023-0…  41.4  2.19</span></span>
-<span><span class="co">#&gt; # … with 231 more rows, and abbreviated variable names ¹​nice_name,</span></span>
-<span><span class="co">#&gt; #   ²​classification, ³​record_time, ⁴​client_name, ⁵​client_type, ⁶​processed</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 241 × 11</span></span>
+<span><span class="co">#&gt;    `_id`   temperature nice_name classification record_time humidity client_name</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;          &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;      </span></span>
+<span><span class="co">#&gt;  1 6408cd…        17.0 FILE_167… Culex female   2023-03-08…     61.1 ASPB 3 (Pe…</span></span>
+<span><span class="co">#&gt;  2 6407d7…        12.3 FILE_167… Test pulse     2023-03-08…     56.4 ASPB 2 (Ho…</span></span>
+<span><span class="co">#&gt;  3 6407d7…        12.8 FILE_167… Test pulse     2023-03-08…     61.3 ASPB 3 (Pe…</span></span>
+<span><span class="co">#&gt;  4 6407d7…        12.7 FILE_167… Test pulse     2023-03-08…     60.4 ASPB 1 (Sa…</span></span>
+<span><span class="co">#&gt;  5 6407d7…        14.0 FILE_167… Test pulse     2023-03-08…     61.1 ASPB 5 (Zo…</span></span>
+<span><span class="co">#&gt;  6 6407d7…        14.7 FILE_167… Test pulse     2023-03-08…     72.5 ASPB 4 (Le…</span></span>
+<span><span class="co">#&gt;  7 6407de…        12.6 FILE_167… Test pulse     2023-03-08…     60.3 ASPB 1 (Sa…</span></span>
+<span><span class="co">#&gt;  8 6407de…        12.8 FILE_167… Test pulse     2023-03-08…     61.4 ASPB 3 (Pe…</span></span>
+<span><span class="co">#&gt;  9 6407de…        12.2 FILE_167… Test pulse     2023-03-08…     56.5 ASPB 2 (Ho…</span></span>
+<span><span class="co">#&gt; 10 6407de…        14.1 FILE_167… Test pulse     2023-03-08…     61.1 ASPB 5 (Zo…</span></span>
+<span><span class="co">#&gt; # ℹ 231 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 4 more variables: client_type &lt;chr&gt;, processed &lt;chr&gt;, lat &lt;lgl&gt;, lng &lt;lgl&gt;</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
@@ -190,6 +193,8 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://mosquito-alert.github.io/mosquitoR/"><img src="https://img.shields.io/static/v1?label=Documentation&amp;message=html&amp;color=informational" alt="Documentation"></a></li>
+<li><a href="https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://codecov.io/gh/Mosquito-Alert/mosquitoR" class="external-link"><img src="https://codecov.io/gh/Mosquito-Alert/mosquitoR/graph/badge.svg?token=BXESGV8OY0" alt="codecov"></a></li>
 </ul>
 </div>
 
