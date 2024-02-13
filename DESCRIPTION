@@ -28,5 +28,5 @@ Imports:
     tidyr,
     utils,
     stats,
-    jsontools,
-    sf
+    sf,
+    keyring

@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_metadata_template.R
 \name{make_metadata_template}
 \alias{make_metadata_template}
-\title{Make metadata tempplate ready for data portal}
+\title{Make metadata template ready for data portal}
 \usage{
 make_metadata_template(
   type = "Dataset",
@@ -17,8 +17,8 @@ make_metadata_template(
   measurement_technique = "",
   temporal_coverage = "",
   creator = "",
-  variable_info,
-  distribution
+  variable_info = "",
+  distribution = ""
 )
 }
 \arguments{
@@ -54,5 +54,5 @@ make_metadata_template(
 A json string.
 }
 \description{
-Make metadata tempplate ready for data portal
+Make metadata template ready for data portal
 }
