@@ -19,7 +19,7 @@ jobs:
       - name: Create and populate .Renviron file
         run: |
           echo SENSCAPE_API_KEY="$SENSCAPE_API_KEY" >> ~/.Renviron
-          shell: bash
+        shell: bash
       - uses: actions/checkout@v3
 
       - uses: r-lib/actions/setup-r@v2
