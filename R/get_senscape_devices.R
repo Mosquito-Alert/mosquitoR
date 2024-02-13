@@ -4,7 +4,7 @@
 #' @returns A tibble.
 #' @export
 #' @examples
-#' my_devices = get_senscape_devices(api_key = keyring::key_get(SENSCAPE_API_KEY))
+#' my_devices = get_senscape_devices(api_key = SENSCAPE_API_KEY)
 #' my_devices
 get_senscape_devices = function(api_key){
   device_check = httr::GET("https://senscape.eu/api/devices", httr::add_headers('authorization' = api_key))
