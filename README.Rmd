@@ -59,6 +59,8 @@ library(dplyr)
 library(magrittr)
 library(keyring)
 
+# first set your API key:
+# key_set("SENSCAPE_API_KEY")
 SENSCAPE_API_KEY = key_get("SENSCAPE_API_KEY")
 
 # get list of device IDs with names that start with ASPB
