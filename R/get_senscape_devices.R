@@ -1,6 +1,6 @@
 #' Download device information from Senscape server using http get request.
 #'
-#' @param key_path Path to Senscape API key.
+#' @param api_key Senscape API key.
 #' @returns A tibble.
 #' @export
 #' @examples

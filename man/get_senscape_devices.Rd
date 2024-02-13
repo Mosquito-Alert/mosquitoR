@@ -7,7 +7,7 @@
 get_senscape_devices(api_key)
 }
 \arguments{
-\item{key_path}{Path to Senscape API key.}
+\item{api_key}{Senscape API key.}
 }
 \value{
 A tibble.
