@@ -28,5 +28,4 @@ Imports:
     tidyr,
     utils,
     stats,
-    jsontools,
     sf

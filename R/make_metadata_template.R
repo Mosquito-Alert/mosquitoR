@@ -1,4 +1,4 @@
-#' Make metadata tempplate ready for data portal
+#' Make metadata template ready for data portal
 #'
 #' @param type A string.
 #' @param name A string.
@@ -16,9 +16,9 @@
 #' @param distribution A string
 #' @returns A json string.
 #' @export
-make_metadata_template = function(type="Dataset", name="", description="", conditions_of_access="", url="", same_as="", identifier="", license="", citation="", measurement_technique = "", temporal_coverage = "", creator = "", variable_info, distribution) {
+make_metadata_template = function(type="Dataset", name="", description="", conditions_of_access="", url="", same_as="", identifier="", license="", citation="", measurement_technique = "", temporal_coverage = "", creator = "", variable_info = "", distribution = "") {
 
-  result = jsontools::parse_json(paste0('{
+  result = jsonlite::fromJSON(paste0('{
 "@context": {
     "@vocab": "https://schema.org/",
     "qudt": "http://qudt.org/schema/qudt/",
@@ -46,5 +46,5 @@ make_metadata_template = function(type="Dataset", name="", description="", condi
   result$variableMeasured = variable_info
   result$distribution = distribution
 
-  return(result)
+  return(jsonlite::toJSON(result))
 }
