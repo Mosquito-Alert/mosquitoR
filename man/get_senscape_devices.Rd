@@ -16,6 +16,6 @@ A tibble.
 Download device information from Senscape server using http get request.
 }
 \examples{
-my_devices = get_senscape_devices(api_key = SENSCAPE_API_KEY)
+my_devices = get_senscape_devices(api_key = ifelse(exists("SENSCAPE_API_KEY"), SENSCAPE_API_KEY, keyring::key_get("SENSCAPE_API_KEY")))
 my_devices
 }
