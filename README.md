@@ -7,8 +7,7 @@
 
 [![Documentation](https://img.shields.io/static/v1?label=Documentation&message=html&color=informational)](https://mosquito-alert.github.io/mosquitoR/)
 [![R-CMD-check](https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml)
-[![Codecov test
-coverage](https://codecov.io/gh/Mosquito-Alert/mosquitoR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Mosquito-Alert/mosquitoR?branch=main)
+[![codecov](https://codecov.io/gh/Mosquito-Alert/mosquitoR/graph/badge.svg?token=BXESGV8OY0)](https://codecov.io/gh/Mosquito-Alert/mosquitoR)
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data
