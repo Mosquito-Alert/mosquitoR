@@ -6,6 +6,9 @@
 <!-- badges: start -->
 
 [![Documentation](https://img.shields.io/static/v1?label=Documentation&message=html&color=informational)](https://mosquito-alert.github.io/mosquitoR/)
+[![R-CMD-check](https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/Mosquito-Alert/mosquitoR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Mosquito-Alert/mosquitoR?branch=main)
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data
@@ -69,34 +72,37 @@ library(dplyr)
 #> 
 #>     intersect, setdiff, setequal, union
 library(magrittr)
+library(keyring)
+
+SENSCAPE_API_KEY = key_get("SENSCAPE_API_KEY")
 
 # get list of device IDs with names that start with ASPB
-ASPB_deviceIds = get_senscape_devices(key_path = "../auth/senscape_api_key.txt") %>% filter(startsWith(name, "ASPB")) %>% pull(`_id`)
+ASPB_deviceIds = get_senscape_devices(api_key = SENSCAPE_API_KEY) %>% filter(startsWith(name, "ASPB")) %>% pull(`_id`)
 ASPB_deviceIds
-#> [1] "5f1076e798fda900151ff684" "5f10762e98fda900151ff680"
-#> [3] "5f10767c98fda900151ff681" "5f1076c998fda900151ff683"
-#> [5] "5f1076ae98fda900151ff682"
+#> [1] "5f1076e798fda900151ff684" "5f1076ae98fda900151ff682"
+#> [3] "5f10762e98fda900151ff680" "5f10767c98fda900151ff681"
+#> [5] "5f1076c998fda900151ff683"
 
 # get all data from these devices within a specified interval
-my_data = get_senscape_data(key_path = "../auth/senscape_api_key.txt", start_datetime = as_datetime("2023-03-08"), end_datetime = as_datetime("2023-03-09"), deviceIds = ASPB_deviceIds)
+my_data = get_senscape_data(api_key = SENSCAPE_API_KEY, start_datetime = as_datetime("2023-03-08"), end_datetime = as_datetime("2023-03-09"), deviceIds = ASPB_deviceIds)
 #> Getting Senscape Data from 2023-03-08 to 2023-03-09
 #>   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 my_data
-#> # A tibble: 241 × 9
-#>    `_id`             nice_…¹ class…² recor…³ clien…⁴ clien…⁵ proce…⁶   lat   lng
-#>    <chr>             <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <dbl> <dbl>
-#>  1 6408cd3a62588276… FILE_1… Culex … 2023-0… ASPB 3… Mosqui… 2023-0…  41.4  2.12
-#>  2 6407d71a62588276… FILE_1… Test p… 2023-0… ASPB 2… Mosqui… 2023-0…  41.4  2.15
-#>  3 6407d71c62588276… FILE_1… Test p… 2023-0… ASPB 3… Mosqui… 2023-0…  41.4  2.12
-#>  4 6407d71bfcadc748… FILE_1… Test p… 2023-0… ASPB 1… Mosqui… 2023-0…  41.4  2.19
-#>  5 6407d71d1969a50b… FILE_1… Test p… 2023-0… ASPB 5… Mosqui… 2023-0…  41.4  2.19
-#>  6 6407d71c1969a50b… FILE_1… Test p… 2023-0… ASPB 4… Mosqui… 2023-0…  41.4  2.15
-#>  7 6407de2362588276… FILE_1… Test p… 2023-0… ASPB 1… Mosqui… 2023-0…  41.4  2.19
-#>  8 6407de22fcadc748… FILE_1… Test p… 2023-0… ASPB 3… Mosqui… 2023-0…  41.4  2.12
-#>  9 6407de22a511e19f… FILE_1… Test p… 2023-0… ASPB 2… Mosqui… 2023-0…  41.4  2.15
-#> 10 6407de2a1969a50b… FILE_1… Test p… 2023-0… ASPB 5… Mosqui… 2023-0…  41.4  2.19
-#> # … with 231 more rows, and abbreviated variable names ¹​nice_name,
-#> #   ²​classification, ³​record_time, ⁴​client_name, ⁵​client_type, ⁶​processed
+#> # A tibble: 241 × 11
+#>    `_id`   temperature nice_name classification record_time humidity client_name
+#>    <chr>         <dbl> <chr>     <chr>          <chr>          <dbl> <chr>      
+#>  1 6408cd…        17.0 FILE_167… Culex female   2023-03-08…     61.1 ASPB 3 (Pe…
+#>  2 6407d7…        12.3 FILE_167… Test pulse     2023-03-08…     56.4 ASPB 2 (Ho…
+#>  3 6407d7…        12.8 FILE_167… Test pulse     2023-03-08…     61.3 ASPB 3 (Pe…
+#>  4 6407d7…        12.7 FILE_167… Test pulse     2023-03-08…     60.4 ASPB 1 (Sa…
+#>  5 6407d7…        14.0 FILE_167… Test pulse     2023-03-08…     61.1 ASPB 5 (Zo…
+#>  6 6407d7…        14.7 FILE_167… Test pulse     2023-03-08…     72.5 ASPB 4 (Le…
+#>  7 6407de…        12.6 FILE_167… Test pulse     2023-03-08…     60.3 ASPB 1 (Sa…
+#>  8 6407de…        12.8 FILE_167… Test pulse     2023-03-08…     61.4 ASPB 3 (Pe…
+#>  9 6407de…        12.2 FILE_167… Test pulse     2023-03-08…     56.5 ASPB 2 (Ho…
+#> 10 6407de…        14.1 FILE_167… Test pulse     2023-03-08…     61.1 ASPB 5 (Zo…
+#> # ℹ 231 more rows
+#> # ℹ 4 more variables: client_type <chr>, processed <chr>, lat <lgl>, lng <lgl>
 ```
 
 ## Documentation
