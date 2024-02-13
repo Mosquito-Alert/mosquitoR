@@ -1,6 +1,6 @@
 #' Download data from Senscape server using http get request.
 #'
-#' @param key_path Path to Senscape API key.
+#' @param api_key Path to Senscape API key.
 #' @param page_size The number items per page. Defaults to 10.
 #' @param start_datetime A datetime object that will be used as the lower bound to filter records.
 #' @param end_datetime A datetime object that will be used as the upper bound to filter records.
@@ -8,9 +8,9 @@
 #' @returns A tibble.
 #' @export
 #' @examples
-#' new_smart_trap_data = get_senscape_data(key_path = "../auth/senscape_api_key.txt", start_datetime = lubridate::as_datetime("2023-03-08"), end_datetime = lubridate::as_datetime("2023-03-09"), deviceIds = c("5f1076c998fda900151ff683", "5f1076c998fda900151ff683", "5f10762e98fda900151ff680", "5f10767c98fda900151ff681", "5f1076ae98fda900151ff682"))
+#' new_smart_trap_data = get_senscape_data(api_key = keyring::key_get("senscape_api_key"), start_datetime = lubridate::as_datetime("2023-03-08"), end_datetime = lubridate::as_datetime("2023-03-09"), deviceIds = c("5f1076c998fda900151ff683", "5f1076c998fda900151ff683", "5f10762e98fda900151ff680", "5f10767c98fda900151ff681", "5f1076ae98fda900151ff682"))
 #' new_smart_trap_data
-get_senscape_data = function(key_path, page_size = 10, start_datetime, end_datetime, deviceIds=NA){
+get_senscape_data = function(api_key, page_size = 10, start_datetime, end_datetime, deviceIds=NA){
 
   httr::set_config(httr::config(ssl_verifypeer = 0L))
 
@@ -47,7 +47,7 @@ flush.console()
 
     this_query = paste0("https://senscape.eu/api/data?", deviceId_query, "sortOrder=asc&sortField=record_time&filterStart=", start, "&filterEnd=", end)
 
-    data_req <- httr::GET(this_query, httr::add_headers('authorization' = readr::read_lines(key_path)))
+    data_req <- httr::GET(this_query, httr::add_headers('authorization' = api_key))
 
     sense_data_count = tibble::as_tibble(jsonlite::fromJSON(httr::content(data_req, "text"))$count)
 
@@ -55,14 +55,14 @@ flush.console()
 
     this_smart_trap_data = dplyr::bind_rows(lapply(0:total_pages, function(i){
 
-            data_req <- httr::GET(paste0(this_query, "&pageNumber=", i, "&pageSize=", page_size), httr::add_headers('authorization' = readr::read_lines(key_path)))
+            data_req <- httr::GET(paste0(this_query, "&pageNumber=", i, "&pageSize=", page_size), httr::add_headers('authorization' = api_key))
       tibble::as_tibble(jsonlite::fromJSON(httr::content(data_req, "text"))$samples)
     }))
 
 
     this_query_pulses = paste0("https://senscape.eu/api/data?", deviceId_query, "classification=Test%20pulse&sortOrder=asc&sortField=record_time&filterStart=", start, "&filterEnd=", end)
 
-    data_req <- httr::GET(this_query_pulses, httr::add_headers('authorization' = readr::read_lines(key_path)))
+    data_req <- httr::GET(this_query_pulses, httr::add_headers('authorization' = api_key))
 
     sense_data_count = tibble::as_tibble(jsonlite::fromJSON(httr::content(data_req, "text"))$count)
 
@@ -70,7 +70,7 @@ flush.console()
 
     this_smart_trap_data_pulses = dplyr::bind_rows(lapply(0:total_pages, function(i){
 
-            data_req <- httr::GET(paste0(this_query_pulses, "&pageNumber=", i, "&pageSize=", page_size), httr::add_headers('authorization' = readr::read_lines(key_path)))
+            data_req <- httr::GET(paste0(this_query_pulses, "&pageNumber=", i, "&pageSize=", page_size), httr::add_headers('authorization' = api_key))
       tibble::as_tibble(jsonlite::fromJSON(httr::content(data_req, "text"))$samples)
     }))
 

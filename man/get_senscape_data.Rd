@@ -5,7 +5,7 @@
 \title{Download data from Senscape server using http get request.}
 \usage{
 get_senscape_data(
-  key_path,
+  api_key,
   page_size = 10,
   start_datetime,
   end_datetime,
@@ -13,7 +13,7 @@ get_senscape_data(
 )
 }
 \arguments{
-\item{key_path}{Path to Senscape API key.}
+\item{api_key}{Path to Senscape API key.}
 
 \item{page_size}{The number items per page. Defaults to 10.}
 
@@ -30,6 +30,6 @@ A tibble.
 Download data from Senscape server using http get request.
 }
 \examples{
-new_smart_trap_data = get_senscape_data(key_path = "../auth/senscape_api_key.txt", start_datetime = lubridate::as_datetime("2023-03-08"), end_datetime = lubridate::as_datetime("2023-03-09"), deviceIds = c("5f1076c998fda900151ff683", "5f1076c998fda900151ff683", "5f10762e98fda900151ff680", "5f10767c98fda900151ff681", "5f1076ae98fda900151ff682"))
+new_smart_trap_data = get_senscape_data(api_key = keyring::key_get("senscape_api_key"), start_datetime = lubridate::as_datetime("2023-03-08"), end_datetime = lubridate::as_datetime("2023-03-09"), deviceIds = c("5f1076c998fda900151ff683", "5f1076c998fda900151ff683", "5f10762e98fda900151ff680", "5f10767c98fda900151ff681", "5f1076ae98fda900151ff682"))
 new_smart_trap_data
 }

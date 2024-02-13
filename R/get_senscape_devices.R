@@ -4,9 +4,9 @@
 #' @returns A tibble.
 #' @export
 #' @examples
-#' my_devices = get_senscape_devices(key_path = "../auth/senscape_api_key.txt")
+#' my_devices = get_senscape_devices(api_key = keyring::key_get("senscape_api_key"))
 #' my_devices
-get_senscape_devices = function(key_path){
-  device_check = httr::GET("https://senscape.eu/api/devices", httr::add_headers('authorization' = readr::read_lines(key_path)))
+get_senscape_devices = function(api_key){
+  device_check = httr::GET("https://senscape.eu/api/devices", httr::add_headers('authorization' = api_key))
   return(tibble::as_tibble(jsonlite::fromJSON(httr::content(device_check, "text"))$devices))
 }

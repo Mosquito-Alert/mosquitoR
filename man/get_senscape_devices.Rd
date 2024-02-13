@@ -4,7 +4,7 @@
 \alias{get_senscape_devices}
 \title{Download device information from Senscape server using http get request.}
 \usage{
-get_senscape_devices(key_path)
+get_senscape_devices(api_key)
 }
 \arguments{
 \item{key_path}{Path to Senscape API key.}
@@ -16,6 +16,6 @@ A tibble.
 Download device information from Senscape server using http get request.
 }
 \examples{
-my_devices = get_senscape_devices(key_path = "../auth/senscape_api_key.txt")
+my_devices = get_senscape_devices(api_key = keyring::key_get("senscape_api_key"))
 my_devices
 }
