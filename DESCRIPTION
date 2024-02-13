@@ -28,4 +28,5 @@ Imports:
     tidyr,
     utils,
     stats,
-    sf
+    sf,
+    keyring
