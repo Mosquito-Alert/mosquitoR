@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# mosquitoR
+# mosquitoR <a href="https://mosquito-alert.github.io/mosquitoR/"><img src="man/figures/logo.png" align="right" height="139" alt="mosquitoR website" /></a>
 
 <!-- badges: start -->
 [![Documentation](https://img.shields.io/static/v1?label=Documentation&message=html&color=informational)](https://mosquito-alert.github.io/mosquitoR/)
