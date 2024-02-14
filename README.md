@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mosquitoR
+# mosquitoR <a href="https://mosquito-alert.github.io/mosquitoR/"><img src="man/figures/logo.png" align="right" height="139" alt="mosquitoR website" /></a>
 
 <!-- badges: start -->
 
@@ -81,7 +81,7 @@ SENSCAPE_API_KEY = key_get("SENSCAPE_API_KEY")
 # get list of device IDs with names that start with ASPB
 ASPB_deviceIds = get_senscape_devices(api_key = SENSCAPE_API_KEY) %>% filter(startsWith(name, "ASPB")) %>% pull(`_id`)
 ASPB_deviceIds
-#> [1] "5f10767c98fda900151ff681" "5f10762e98fda900151ff680"
+#> [1] "5f10762e98fda900151ff680" "5f10767c98fda900151ff681"
 #> [3] "5f1076c998fda900151ff683" "5f1076ae98fda900151ff682"
 #> [5] "5f1076e798fda900151ff684"
 
