@@ -113,8 +113,8 @@
 <span><span class="co"># get list of device IDs with names that start with ASPB</span></span>
 <span><span class="va">ASPB_deviceIds</span> <span class="op">=</span> <span class="fu"><a href="reference/get_senscape_devices.html">get_senscape_devices</a></span><span class="op">(</span>api_key <span class="op">=</span> <span class="va">SENSCAPE_API_KEY</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/startsWith.html" class="external-link">startsWith</a></span><span class="op">(</span><span class="va">name</span>, <span class="st">"ASPB"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">`_id`</span><span class="op">)</span></span>
 <span><span class="va">ASPB_deviceIds</span></span>
-<span><span class="co">#&gt; [1] "5f10762e98fda900151ff680" "5f1076ae98fda900151ff682"</span></span>
-<span><span class="co">#&gt; [3] "5f1076c998fda900151ff683" "5f10767c98fda900151ff681"</span></span>
+<span><span class="co">#&gt; [1] "5f10767c98fda900151ff681" "5f10762e98fda900151ff680"</span></span>
+<span><span class="co">#&gt; [3] "5f1076c998fda900151ff683" "5f1076ae98fda900151ff682"</span></span>
 <span><span class="co">#&gt; [5] "5f1076e798fda900151ff684"</span></span>
 <span></span>
 <span><span class="co"># get all data from these devices within a specified interval</span></span>
@@ -196,6 +196,7 @@
 <ul class="list-unstyled">
 <li><a href="https://mosquito-alert.github.io/mosquitoR/"><img src="https://img.shields.io/static/v1?label=Documentation&amp;message=html&amp;color=informational" alt="Documentation"></a></li>
 <li><a href="https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
 </div>
 
