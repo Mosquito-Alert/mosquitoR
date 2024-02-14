@@ -7,6 +7,8 @@
 
 [![Documentation](https://img.shields.io/static/v1?label=Documentation&message=html&color=informational)](https://mosquito-alert.github.io/mosquitoR/)
 [![R-CMD-check](https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Mosquito-Alert/mosquitoR/actions/workflows/R-CMD-check.yaml)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 The goal of mosquitoR is provide to set of tools for analyzing data
@@ -79,8 +81,8 @@ SENSCAPE_API_KEY = key_get("SENSCAPE_API_KEY")
 # get list of device IDs with names that start with ASPB
 ASPB_deviceIds = get_senscape_devices(api_key = SENSCAPE_API_KEY) %>% filter(startsWith(name, "ASPB")) %>% pull(`_id`)
 ASPB_deviceIds
-#> [1] "5f10762e98fda900151ff680" "5f1076ae98fda900151ff682"
-#> [3] "5f1076c998fda900151ff683" "5f10767c98fda900151ff681"
+#> [1] "5f10767c98fda900151ff681" "5f10762e98fda900151ff680"
+#> [3] "5f1076c998fda900151ff683" "5f1076ae98fda900151ff682"
 #> [5] "5f1076e798fda900151ff684"
 
 # get all data from these devices within a specified interval
