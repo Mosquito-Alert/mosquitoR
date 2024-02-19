@@ -29,4 +29,5 @@ Imports:
     utils,
     stats,
     sf,
-    keyring
+    keyring,
+    n2khab
