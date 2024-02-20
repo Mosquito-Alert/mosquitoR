@@ -29,4 +29,6 @@ Imports:
     sf,
     assertthat,
     utils,
-    stats
+    stats,
+    curl,
+    tools
