@@ -16,9 +16,6 @@ Suggests:
     covr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-Additional_repositories:
-    https://inbo.r-universe.dev
-    https://cloud.r-project.org
 Imports:
     httr,
     lubridate,
@@ -33,5 +30,3 @@ Imports:
     stats,
     sf,
     keyring
-Suggests:
-    n2khab
