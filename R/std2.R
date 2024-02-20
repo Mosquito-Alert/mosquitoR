@@ -4,5 +4,5 @@
 #' @returns A numeric vector.
 #' @export
 std2 = function(x) {
-  (x-mean(x,na.rm=T))/(2*sd(x, na.rm=T))
+  (x-mean(x,na.rm=T))/(2*stats::sd(x, na.rm=T))
 }
