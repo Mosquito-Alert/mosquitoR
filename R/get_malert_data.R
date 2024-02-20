@@ -14,7 +14,7 @@ get_malert_data = function(source = "zenodo", doi = "10.5281/zenodo.597466"){
     download.file("https://github.com/MosquitoAlert/Data/raw/master/all_reports.zip", destfile = temp)
     } else if(source == "zenodo" & !is.na(doi)){
       dir.create(this_temp_file, showWarnings = FALSE)
-      n2khab::download_zenodo(doi = doi, path = this_temp_file)
+      download_zenodo(doi = doi, path = this_temp_file)
       this_file = list.files(this_temp_file)
       this_temp_file_zip = file.path(this_temp_file, list.files(this_temp_file))
       outer_file_name = unzip(this_temp_file_zip, exdir = temp, list = TRUE)[1,1]
@@ -27,7 +27,7 @@ get_malert_data = function(source = "zenodo", doi = "10.5281/zenodo.597466"){
       print(this_year)
       flush.console()
       this_file = paste0("home/webuser/webapps/tigaserver/static/all_reports", this_year, ".json")
-      jsonlite::fromJSON(unz(temp_test, file = this_file), flatten = TRUE) %>% as_tibble()
+      jsonlite::fromJSON(unz(temp, file = this_file), flatten = TRUE) %>% as_tibble()
     }))
     unlink(this_temp_file)
     return(reports)
