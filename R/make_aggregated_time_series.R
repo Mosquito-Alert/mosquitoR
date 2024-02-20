@@ -8,6 +8,8 @@
 #' @returns A tibble.
 #' @import magrittr
 #' @import dplyr
+#' @importFrom stats sd
+#' @importFrom utils download.file flush.console setTxtProgressBar txtProgressBar unzip
 #' @export
 make_aggregated_time_series = function(x, start=NA, end=NA, interval="day", groups = c("trap_ID", "TigacellID")){
 
