@@ -48,13 +48,17 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_malert_data</span><span class="op">(</span>source <span class="op">=</span> <span class="st">"github"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_malert_data</span><span class="op">(</span>source <span class="op">=</span> <span class="st">"zenodo"</span>, doi <span class="op">=</span> <span class="st">"10.5281/zenodo.597466"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>source</dt>
-<dd><p>String. Source to download from. Currently only github works.</p></dd>
+<dd><p>String. Source to download from. Options are github or zenodo.</p></dd>
+
+
+<dt>doi</dt>
+<dd><p>String. Zenodo doi if downloading from Zenodo. Default is the doi that will always point to the most recent version: 10.5281/zenodo.597466.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -68,37 +72,9 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">malert_reports</span> <span class="op">=</span> <span class="fu">get_malert_data</span><span class="op">(</span>source <span class="op">=</span> <span class="st">"github"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2015</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2016</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2017</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2019</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2021</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2022</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2024</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in FUN(X[[i]], ...):</span> object 'temp_test' not found</span>
 <span class="r-in"><span><span class="va">malert_reports</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 188,378 × 131</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    version_UUID creation_time creation_date creation_day_since_l…¹ creation_year</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> fa43baea-99… 2014-06-23T1… 2014-06-23                        10          <span style="text-decoration: underline;">2</span>014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 9f3c6411-93… 2014-06-23T1… 2014-06-23                        10          <span style="text-decoration: underline;">2</span>014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> d60dc328-83… 2014-06-23T2… 2014-06-23                        10          <span style="text-decoration: underline;">2</span>014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> bb5eb598-39… 2014-06-23T2… 2014-06-23                        10          <span style="text-decoration: underline;">2</span>014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 1841d310-4d… 2014-08-28T1… 2014-08-28                        76          <span style="text-decoration: underline;">2</span>014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 13349FC6-FC… 2014-06-30T1… 2014-06-30                        17          <span style="text-decoration: underline;">2</span>014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 6247053c-56… 2014-07-01T1… 2014-07-01                        18          <span style="text-decoration: underline;">2</span>014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 620d5e65-af… 2014-09-22T0… 2014-09-22                       101          <span style="text-decoration: underline;">2</span>014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> a4fb2b11-ab… 2014-07-05T0… 2014-07-05                        22          <span style="text-decoration: underline;">2</span>014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> c2038269-56… 2014-09-07T1… 2014-09-07                        86          <span style="text-decoration: underline;">2</span>014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 188,368 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ abbreviated name: ¹​creation_day_since_launch</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 126 more variables: creation_month &lt;int&gt;, site_cat &lt;int&gt;, type &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   lon &lt;dbl&gt;, lat &lt;dbl&gt;, tigaprob_cat &lt;int&gt;, visible &lt;lgl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   latest_version &lt;lgl&gt;, n_photos &lt;int&gt;, final_expert_status_text &lt;int&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   responses &lt;list&gt;, country &lt;chr&gt;, updated_at &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   datetime_fix_offset &lt;int&gt;, cached_visible &lt;int&gt;, point &lt;chr&gt;, …</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'malert_reports' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
