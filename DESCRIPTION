@@ -21,13 +21,10 @@ Imports:
     lubridate,
     jsonlite,
     tibble,
-    readr,
     dplyr,
     stringr,
     magrittr,
     tidyr,
-    utils,
     stats,
     sf,
-    keyring,
     assertthat
