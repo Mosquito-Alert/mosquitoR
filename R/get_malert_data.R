@@ -17,7 +17,7 @@ get_malert_data = function(source = "zenodo", doi = "10.5281/zenodo.597466"){
       download_zenodo(doi = doi, path = this_temp_file)
       this_file = list.files(this_temp_file)
       this_temp_file_zip = file.path(this_temp_file, list.files(this_temp_file))
-      outer_file_name = unzip(this_temp_file_zip, exdir = temp, list = TRUE)[1,1]
+      outer_file_name = unzip(this_temp_file_zip, exdir = this_temp_file, list = TRUE)[1,1]
       unzip(this_temp_file_zip, exdir = this_temp_file)
       temp = file.path(this_temp_file, outer_file_name, "all_reports.zip")
     } else{
