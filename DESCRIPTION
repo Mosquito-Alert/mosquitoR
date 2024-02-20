@@ -27,4 +27,6 @@ Imports:
     tidyr,
     stats,
     sf,
-    assertthat
+    assertthat,
+    utils,
+    stats
