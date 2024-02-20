@@ -29,6 +29,9 @@
 #' is.flag
 #' noNA
 #'
+#' @import jsonlite
+#' @import curl
+#' @import tools
 #' @export
 #' @family functions regarding file management for N2KHAB projects
 #'
@@ -50,8 +53,6 @@ download_zenodo <- function(doi,
                             quiet = FALSE) {
   assert_that(is.string(doi), is.string(path))
   assert_that(is.flag(parallel), noNA(parallel), is.flag(quiet), noNA(quiet))
-
-  require_pkgs(c("jsonlite", "curl", "tools"))
 
   # check for existence of the folder
   stopifnot(dir.exists(path))
@@ -141,4 +142,53 @@ download_zenodo <- function(doi,
     }
   }
 }
+
+
+
+#' Human-readable binary file size
+#'
+#' Takes an integer (referring to number of bytes) and returns an optimally
+#' human-readable
+#' \href{https://en.wikipedia.org/wiki/Binary_prefix}{binary-prefixed}
+#' byte size (KiB, MiB, GiB, TiB, PiB, EiB).
+#' The function is vectorised.
+#'
+#' @author Floris Vanderhaeghe, \email{floris.vanderhaeghe@@inbo.be}
+#'
+#' @param x A positive integer, i.e. the number of bytes (B).
+#' Can be a vector of file sizes.
+#'
+#' @return
+#' A character vector.
+#'
+#' @keywords internal
+#' @importFrom assertthat
+#' assert_that
+#' @importFrom dplyr
+#' %>%
+human_filesize <- function(x) {
+  assert_that(is.numeric(x))
+  assert_that(all(x %% 1 == 0 & x >= 0))
+  magnitude <-
+    log(x, base = 1024) %>%
+    floor(x = .) %>%
+    pmin(8)
+  unit <- factor(magnitude,
+                 levels = 0:8,
+                 labels = c(
+                   "B",
+                   "KiB",
+                   "MiB",
+                   "GiB",
+                   "TiB",
+                   "PiB",
+                   "EiB",
+                   "ZiB",
+                   "YiB"
+                 )
+  )
+  size <- (x / 1024^magnitude) %>% round(1)
+  return(paste(size, unit))
+}
+
 
