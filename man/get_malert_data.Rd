@@ -4,10 +4,12 @@
 \alias{get_malert_data}
 \title{Download Mosquito Alert report data from GitHub}
 \usage{
-get_malert_data(source = "github")
+get_malert_data(source = "zenodo", doi = "10.5281/zenodo.597466")
 }
 \arguments{
-\item{source}{String. Source to download from. Currently only github works.}
+\item{source}{String. Source to download from. Options are github or zenodo.}
+
+\item{doi}{String. Zenodo doi if downloading from Zenodo. Default is the doi that will always point to the most recent version: 10.5281/zenodo.597466.}
 }
 \value{
 A tibble.
