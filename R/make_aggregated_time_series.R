@@ -8,6 +8,8 @@
 #' @returns A tibble.
 #' @import magrittr
 #' @import dplyr
+#' @importFrom stats sd
+#' @importFrom utils download.file flush.console setTxtProgressBar txtProgressBar unzip
 #' @export
 make_aggregated_time_series = function(x, start=NA, end=NA, interval="day", groups = c("trap_ID", "TigacellID")){
 
@@ -16,10 +18,10 @@ make_aggregated_time_series = function(x, start=NA, end=NA, interval="day", grou
 
   this_start = min(x$date)
   this_end = max(x$date)
-  if(!is.na(start) && class(start) == "Date"){
+  if(!is.na(start) && "Date" %in% class(start)){
     this_start = start
   }
-  if(!is.na(end) && class(end) == "Date"){
+  if(!is.na(end) && "Date" %in% class(end)){
     this_end = end
   }
 
