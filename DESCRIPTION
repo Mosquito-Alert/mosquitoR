@@ -25,7 +25,6 @@ Imports:
     stringr,
     magrittr,
     tidyr,
-    stats,
     sf,
     assertthat,
     utils,

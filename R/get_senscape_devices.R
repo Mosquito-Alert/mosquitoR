@@ -1,6 +1,7 @@
 #' Download device information from Senscape server using http get request.
 #'
 #' @param api_key Senscape API key.
+#' @param page_size The number items per page. Defaults to 10.
 #' @returns A tibble.
 #' @export
 #' @examples
