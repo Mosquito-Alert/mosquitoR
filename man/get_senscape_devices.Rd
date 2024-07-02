@@ -4,10 +4,12 @@
 \alias{get_senscape_devices}
 \title{Download device information from Senscape server using http get request.}
 \usage{
-get_senscape_devices(api_key)
+get_senscape_devices(api_key, page_size = 10)
 }
 \arguments{
 \item{api_key}{Senscape API key.}
+
+\item{page_size}{The number items per page. Defaults to 10.}
 }
 \value{
 A tibble.
