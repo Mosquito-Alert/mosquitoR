@@ -13,8 +13,9 @@
 #' @export
 make_aggregated_time_series = function(x, start=NA, end=NA, interval="day", groups = c("trap_ID", "TigacellID")){
 
-  groups = c(groups, "classification")
-  groups_and_date = c("date", "classification", groups)
+  classification = "classification"
+  groups = c(groups, classification)
+  groups_and_date = c("date", classification, groups)
 
   this_start = min(x$date)
   this_end = max(x$date)
