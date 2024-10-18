@@ -8,23 +8,23 @@
 #' @returns The aggregated data.
 #' @import sf
 #' @import dplyr
-#' @importFrom stats sd
-#' @importFrom
 #' @export
 #' @examples
 #' malert_reports = get_malert_data(source = "github")
 #' malert_reports
 
-malerts_reports_github = get_malert_data(source = "github")
 
+get_malert_aggregates <- function(aggregate_type, filter_year, file_path, country_code, file_layer) {
+
+malerts_reports_github = get_malert_data(source = "github")
 
 if(aggregate_type == "country")
 {
 
-  if (!is.null(filter_year)
-  {
-    malerts_reports_github <- malerts_reports_github %>%
-      filter(year == filter_year)
+  if (!is.null(filter_year))
+      {
+        malerts_reports_github <- malerts_reports_github %>%
+          filter(year == filter_year)
   }
 
 
@@ -36,10 +36,10 @@ if(aggregate_type == "country")
 } else if (aggregate_type == "city")
 {
 
-  if (!is.null(filter_year)
-  {
-      malerts_reports_github <- malerts_reports_github %>%
-        filter(year == filter_year)
+  if (!is.null(filter_year))
+      {
+        malerts_reports_github <- malerts_reports_github %>%
+          filter(year == filter_year)
   }
 
   malerts_reports_github <- malerts_reports_github %>%
@@ -57,8 +57,8 @@ if(aggregate_type == "country")
   }
 
   malerts_reports_github <- st_as_sf(malerts_reports_github,
-                       coords = c("lon", "lat"),
-                       crs = 4326)
+                                     coords = c("lon", "lat"),
+                                     crs = 4326)
 
   malerts_reports_github <- st_join(malerts_reports_github,polygon_file)
 
@@ -66,6 +66,9 @@ if(aggregate_type == "country")
     group_by(layer) %>%
     summarise(count = n())
   arrange(desc(count))
+
+}
+
 
 }
 
