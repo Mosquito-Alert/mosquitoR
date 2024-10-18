@@ -1,10 +1,15 @@
 #' Generates count by country of mosquito alert reports
 #'
-#' @param count_type String. Source to download from. Options are github or zenodo.
-#' @param filter_year String. Zenodo doi if downloading from Zenodo. Default is the doi that will always point to the most recent version: 10.5281/zenodo.597466.
-#' @param geopackage String. Zenodo doi if downloading from Zenodo. Default is the doi that will always point to the most recent version: 10.5281/zenodo.597466.
-#' @param layer String. Zenodo doi if downloading from Zenodo. Default is the doi that will always point to the most recent version: 10.5281/zenodo.597466.
-#' @returns A tibble.
+#' @param aggregate_type String. type of aggragation you would like. Options are country or city
+#' @param filter_year int. The year(s) you would like to filter for. Default is all
+#' @param file_path String. Link the the geopackage or shapefile you would like to use.
+#' @param country_code String. type of aggragation you would like. Options are country or city
+#' @param file_layer String. the layer of the shapefile/geopackage to access
+#' @returns The aggregated data.
+#' @import sf
+#' @import dplyr
+#' @importFrom stats sd
+#' @importFrom
 #' @export
 #' @examples
 #' malert_reports = get_malert_data(source = "github")
@@ -12,13 +17,57 @@
 
 malerts_reports_github = get_malert_data(source = "github")
 
-if (filter_year is not null)
+
+if(aggregate_type == "country")
 {
+
+  if (!is.null(filter_year)
+  {
+    malerts_reports_github <- malerts_reports_github %>%
+      filter(year == filter_year)
+  }
+
+
+  aggregated_data <- malerts_reports_github %>%
+    group_by(country) %>%
+    summarise(count = n())
+  arrange(desc(count))
+
+} else if (aggregate_type == "city")
+{
+
+  if (!is.null(filter_year)
+  {
+      malerts_reports_github <- malerts_reports_github %>%
+        filter(year == filter_year)
+  }
+
   malerts_reports_github <- malerts_reports_github %>%
-    filter(year == "filter_year")
+    filter(country == country_code)
+
+  file_ext <- tools::file_ext(file_path)
+
+  # Test if the file is a shapefile (.shp) or a GPKG file (.gpkg)
+  if (file_ext == "shp") {
+    polygon_file <- st_read(file_path)
+  } else if (file_ext == "gpkg") {
+    polygon_file <- st_read(file_path, layer = file_layer)
+  } else {
+    return("Unknown file type.")
+  }
+
+  malerts_reports_github <- st_as_sf(malerts_reports_github,
+                       coords = c("lon", "lat"),
+                       crs = 4326)
+
+  malerts_reports_github <- st_join(malerts_reports_github,polygon_file)
+
+  aggregated_data <- malerts_reports_github %>%
+    group_by(layer) %>%
+    summarise(count = n())
+  arrange(desc(count))
+
 }
 
-grouped_countries <- malerts_reports_github %>%
-  group_by(country) %>%
-  summarise(count = n())
-  arrange(desc(count))
+
+
