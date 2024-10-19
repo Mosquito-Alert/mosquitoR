@@ -40,7 +40,7 @@ if(aggregate_type == "country")
 
   aggregated_data <- malerts_reports_github %>%
     group_by(country) %>%
-    summarise(count = n())
+    summarise(count = n()) %>%
   arrange(desc(count))
 
 } else if (aggregate_type == "city")
@@ -68,7 +68,7 @@ if(aggregate_type == "country")
 
   aggregated_data <- malerts_reports_github %>%
     group_by(layer) %>%
-    summarise(count = n())
+    summarise(count = n()) %>%
   arrange(desc(count))
 
 }
