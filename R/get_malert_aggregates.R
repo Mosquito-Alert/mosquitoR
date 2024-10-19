@@ -1,7 +1,7 @@
 #' Generates count by country of mosquito alert reports
 #'
 #' @param aggregate_type String. type of aggragation you would like. Options are country or city
-#' @param filter_year int. The year(s) you would like to filter for. Default is all
+#' @param filter_year String. The year(s) you would like to filter for. Default is all. "2014,2"
 #' @param file_path String. Link the the geopackage or shapefile you would like to use.
 #' @param country_code String. type of aggragation you would like. Options are country or city
 #' @param file_layer String. the layer of the shapefile/geopackage to access
@@ -18,15 +18,25 @@ get_malert_aggregates <- function(aggregate_type, filter_year, file_path, countr
 
 malerts_reports_github = get_malert_data(source = "github")
 
-if(aggregate_type == "country")
-{
+# Handle multiple years or year range
+if (!is.null(filter_year)) {
 
-  if (!is.null(filter_year))
-      {
-        malerts_reports_github <- malerts_reports_github %>%
-          filter(year == filter_year)
+  if (grepl("-", filter_year)) { # Check if it's a range (e.g., "2011-2015")
+    years <- as.numeric(unlist(strsplit(filter_year, "-")))
+    filter_year <- seq(years[1], years[2])
+
+  } else if (grepl(",", filter_year)) { # Check if it's a comma-separated list (e.g., "2021,2024,2023,2022")
+    filter_year <- as.numeric(unlist(strsplit(filter_year, ",")))
+  } else {
+    filter_year <- as.numeric(filter_year) # Single year
   }
 
+  malerts_reports_github <- malerts_reports_github %>%
+    filter(creation_year %in% filter_year)
+}
+
+if(aggregate_type == "country")
+{
 
   aggregated_data <- malerts_reports_github %>%
     group_by(country) %>%
@@ -35,12 +45,6 @@ if(aggregate_type == "country")
 
 } else if (aggregate_type == "city")
 {
-
-  if (!is.null(filter_year))
-      {
-        malerts_reports_github <- malerts_reports_github %>%
-          filter(year == filter_year)
-  }
 
   malerts_reports_github <- malerts_reports_github %>%
     filter(country == country_code)
@@ -69,6 +73,7 @@ if(aggregate_type == "country")
 
 }
 
+return(aggregated_data)
 
 }
 
