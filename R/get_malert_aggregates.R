@@ -53,9 +53,11 @@ if(aggregate_type == "country")
 
   # Test if the file is a shapefile (.shp) or a GPKG file (.gpkg)
   if (file_ext == "shp") {
+    file_layer <- paste0("NAME_", file_layer)
     polygon_file <- st_read(file_path)
   } else if (file_ext == "gpkg") {
-    polygon_file <- st_read(file_path, layer = file_layer)
+    file_layer <- paste0("ADM_ADM_", file_layer)
+    polygon_file <- st_read(file_path, layer = gpkg_layer)
   } else {
     return("Unknown file type.")
   }
