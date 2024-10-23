@@ -57,7 +57,7 @@ if(aggregate_type == "country")
     polygon_file <- st_read(file_path)
   } else if (file_ext == "gpkg") {
     file_layer <- paste0("ADM_ADM_", file_layer)
-    polygon_file <- st_read(file_path, layer = gpkg_layer)
+    polygon_file <- st_read(file_path, layer = file_layer)
   } else {
     return("Unknown file type.")
   }
