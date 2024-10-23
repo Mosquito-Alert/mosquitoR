@@ -69,7 +69,7 @@ if(aggregate_type == "country")
   malerts_reports_github <- st_join(malerts_reports_github,polygon_file)
 
   aggregated_data <- malerts_reports_github %>%
-    group_by(file_layer) %>%
+    group_by_at(vars(file_layer)) %>%
     summarise(count = n()) %>%
   arrange(desc(count))
 
