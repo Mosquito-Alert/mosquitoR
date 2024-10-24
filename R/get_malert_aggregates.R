@@ -8,6 +8,7 @@
 #' @returns The aggregated data.
 #' @import sf
 #' @import dplyr
+#' @import stringr
 #' @export
 #' @examples
 #' malert_reports = get_malert_data(source = "github")
@@ -53,9 +54,27 @@ if(aggregate_type == "country")
 
   # Test if the file is a shapefile (.shp) or a GPKG file (.gpkg)
   if (file_ext == "shp") {
+
+    last_digit <- str_extract(file_path, "_\\d+\\.") %>%
+      str_extract("\\d+")
+
+    if(last_digit != file_layer)
+    {
+      file_layer <- last_digit
+    }
+
     file_layer <- paste0("NAME_", file_layer)
     polygon_file <- st_read(file_path)
   } else if (file_ext == "gpkg") {
+    gpkg_layers <- st_layers(file_path)
+    num_rows <- nrow(gpkg_layers)-1
+
+    if (file_layer>num_rows)
+    {
+      file_layer<-num_rows
+    }
+
+
     file_layer <- paste0("ADM_ADM_", file_layer)
     polygon_file <- st_read(file_path, layer = file_layer)
   } else {
