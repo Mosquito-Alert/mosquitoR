@@ -43,7 +43,7 @@ get_era5_data <- function(
   ecmwfr_key = NULL,
   ecmwfr_user = "ecmwfr",
   write_key = FALSE,
-  data_format = c("netcdf","grib"),
+  data_format = c("grib","netcdf"),
   hours = sprintf("%02d:00", 0:23),
   skip_if_exists_mb = 1,
   retry = 2,
@@ -172,7 +172,7 @@ get_era5_data <- function(
           day                = day_vec,
           time               = hours,
           area               = area_str,      # N/W/S/E
-          format          = data_format,
+          data_format        = data_format,
           target             = filename
         )
         if (requires_product_type) req$product_type <- "reanalysis"
