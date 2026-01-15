@@ -1,11 +1,16 @@
 #' Download Mosquito Alert report data from GitHub or Zenodo
 #'
 #' @param source String. Source to download from. Options are "github" or "zenodo".
-#'   If a local file path to a zip archive is provided (e.g., a previously cached "all_reports.zip"), it will be used directly without downloading.
-#' @param doi String. Zenodo DOI if downloading from Zenodo. Default is the doi that will always point to the most recent version: 10.5281/zenodo.597466.
+#'   If a local file path to a zip archive is provided (e.g., a previously cached
+#'   "all_reports.zip"), it will be used directly without downloading.
+#' @param doi String. Zenodo DOI if downloading from Zenodo. Default is the
+#'   doi that will always point to the most recent version: 10.5281/zenodo.597466.
 #' @param cache_path String. Optional path to save the downloaded zip file.
 #'   If provided and the file exists, it will be used instead of re-downloading.
-#'   If `NULL` (default), the downloaded zip and extracted data will be stored in a temporary location and removed after extraction.
+#'   If `NULL` (default), the downloaded zip and extracted data will be stored in a temporary
+#'   location and removed after extraction.
+#' @param read_engine String. Engine to use for reading and parsing JSON files.
+#'   Options are "RcppSimdJson" (default, 5-10x faster) or "jsonlite" (legacy behavior).
 #' @returns A tibble.
 #' @export
 #' @examples
@@ -18,12 +23,20 @@
 #'
 #' # Use cached file directly
 #' malert_reports = get_malert_data(source = "all_reports.zip")
+#'
+#' # Use legacy reading engine (for compatibility, but 5-10x slower)
+#' malert_reports = get_malert_data(source = "github", read_engine = "jsonlite")
 #' }
 get_malert_data = function(
   source = "zenodo",
   doi = "10.5281/zenodo.597466",
-  cache_path = NULL
+  cache_path = NULL,
+  read_engine = "RcppSimdJson"
 ) {
+  if (!read_engine %in% c("RcppSimdJson", "jsonlite")) {
+    stop("read_engine must be either 'RcppSimdJson' or 'jsonlite'")
+  }
+
   # Determine if source is already a file path or a keyword
   is_file_source <- file.exists(source) &&
     !tolower(source) %in% c("github", "zenodo")
@@ -74,7 +87,11 @@ get_malert_data = function(
         paste0("all_reports", this_year, ".json")
       )
 
-      read_malert_json(this_file)
+      if (read_engine == "RcppSimdJson") {
+        read_malert_json_RcppSimdJson(this_file)
+      } else {
+        read_malert_json_jsonlite(this_file)
+      }
     }
   ))
 
