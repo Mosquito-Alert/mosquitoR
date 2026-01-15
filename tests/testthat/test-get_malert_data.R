@@ -204,10 +204,8 @@ create_mock_malert_data <- function(year) {
 
 
 test_that("get_malert_data returns correct tibble structure (mocked github)", {
-  # Create a temp directory for our mock data
-  temp_dir <- tempfile(pattern = "mosquitoR-test-")
-  dir.create(temp_dir, recursive = TRUE)
-  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  # Create a temp directory for our mock data using withr for auto-cleanup
+  temp_dir <- withr::local_tempdir(pattern = "mosquitoR-test-")
 
   # Create nested directory structure matching real zip
   json_dir <- file.path(
@@ -233,11 +231,8 @@ test_that("get_malert_data returns correct tibble structure (mocked github)", {
 
   # Create the zip file
   zip_file <- file.path(temp_dir, "all_reports.zip")
-  old_wd <- getwd()
-  setwd(temp_dir)
-  on.exit(setwd(old_wd), add = TRUE)
 
-  # Zip all JSON files
+  # Zip all JSON files safely changing directory
   json_files <- file.path(
     "home",
     "webuser",
@@ -246,8 +241,10 @@ test_that("get_malert_data returns correct tibble structure (mocked github)", {
     "static",
     paste0("all_reports", 2014:current_year, ".json")
   )
-  utils::zip(zipfile = zip_file, files = json_files, flags = "-r9Xq")
-  setwd(old_wd)
+  
+  withr::with_dir(temp_dir, {
+    utils::zip(zipfile = zip_file, files = json_files, flags = "-r9Xq")
+  })
 
   # Mock download.file to use our test zip
   # Note: We need to define a mock in the package namespace for proper mocking
