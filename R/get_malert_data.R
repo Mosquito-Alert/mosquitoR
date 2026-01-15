@@ -62,7 +62,7 @@ get_malert_data = function(source = "zenodo", doi = "10.5281/zenodo.597466") {
         return(NULL)
       }
       
-      # Parse with RcppSimdJson (much faster than jsonlite::fromJSON)
+      # Parse data using RcppSimdJson for performance
       parsed_data <- tryCatch({
         RcppSimdJson::fload(this_file, max_simplify_lvl = "data_frame")
       }, error = function(e) {
@@ -81,16 +81,15 @@ get_malert_data = function(source = "zenodo", doi = "10.5281/zenodo.597466") {
       for (col in struct_cols) {
         if (!col %in% names(parsed_data)) next
         val <- parsed_data[[col]]
+        # Check if list column or already dataframe (RcppSimdJson sometimes returns DF)
         if (!is.list(val) || is.data.frame(val)) next
         
-        n_rows <- nrow(parsed_data)
-        
-        # Find first non-null/non-empty element to get schema
-        is_empty <- vapply(val, function(x) is.null(x) || length(x) == 0, logical(1))
+        # Identify empty elements efficiently
+        is_empty <- lengths(val) == 0
         first_valid_idx <- which(!is_empty)[1]
         
         if (is.na(first_valid_idx)) {
-          # All NULL/empty - replace with NA (flatten will ignore)
+          # All elements are empty; replace with NA so flatten ignores them
           parsed_data[[col]] <- NA
           next
         }
@@ -102,24 +101,24 @@ get_malert_data = function(source = "zenodo", doi = "10.5281/zenodo.597466") {
         schema <- names(first_valid)
         na_row <- setNames(as.list(rep(NA, length(schema))), schema)
         
-        # Fast handling of empty/NULL elements (truly empty lists)
-        is_empty <- lengths(val) == 0
+        # Fill strictly empty elements with NA rows
         if (any(is_empty)) {
            val[is_empty] <- list(na_row)
         }
         
-        # Handle case where element exists but all its fields are NULL/length-0 (which rbindlist treats as 0 rows)
-        # This is faster than converting everything to data.frames
+        # Handle elements that are list(integer(0)) or similar nested empty structures
+        # These appear as length > 0 but contain only empty elements
         is_all_nulls <- vapply(val, function(x) length(x) > 0 && all(lengths(x) == 0), logical(1))
         if (any(is_all_nulls)) {
            val[is_all_nulls] <- list(na_row)
         }
         
-        # Use rbindlist for fast binding
-        # We must use fill=TRUE because some rows might be missing new columns
+        # Use rbindlist for fast binding of the list column
         result <- data.table::rbindlist(val, fill = TRUE, use.names = TRUE)
         
-        parsed_data[[col]] <- as.data.frame(result, check.names=FALSE)
+        # Convert data.table to data.frame in-place
+        data.table::setDF(result)
+        parsed_data[[col]] <- result
       }
       
       # Apply jsonlite::flatten() to expand nested data frame columns
