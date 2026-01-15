@@ -49,7 +49,9 @@ get_malert_data = function(
   } else {
     # It's a keyword source, check cache first
     if (!is.null(cache_path) && file.exists(cache_path)) {
-      if (!quiet) message("Using cached file: ", cache_path)
+      if (!quiet) {
+        message("Using cached file: ", cache_path)
+      }
       zip_path <- cache_path
     } else {
       # Need to download
@@ -83,26 +85,34 @@ get_malert_data = function(
 
   years <- 2014:lubridate::year(lubridate::today())
   n_years <- length(years)
-  
-  if (!quiet) message("Reading ", n_years, " files...")
-  
+
+  if (!quiet) {
+    message("Reading ", n_years, " files...")
+  }
+
   reports_list <- vector("list", n_years)
-  
+
   for (i in seq_along(years)) {
     this_year <- years[i]
-    
+
     # Custom progress display to show current file
     if (!quiet) {
-      # Format: [===   ] 30% Reading 2016...
+      # Calculate available width dynamically
+      console_width <- getOption("width")
+      # Approx len of " [] 100% Reading 2016..." is 25 chars.
+      bar_len <- max(5, console_width - 25)
+
       pct <- floor((i / n_years) * 100)
-      n_bars <- floor((i / n_years) * 20)
+      n_bars <- floor((i / n_years) * bar_len)
+
       bar_str <- paste0(
         paste(rep("=", n_bars), collapse = ""),
-        paste(rep(" ", 20 - n_bars), collapse = "")
+        paste(rep(" ", bar_len - n_bars), collapse = "")
       )
+
       cat(sprintf("\r[%s] %3d%% Reading %s...", bar_str, pct, this_year))
     }
-    
+
     this_file = file.path(
       temp_extract_dir,
       "home/webuser/webapps/tigaserver/static",
@@ -115,8 +125,10 @@ get_malert_data = function(
       read_malert_json_jsonlite(this_file)
     }
   }
-  if (!quiet) cat("\n") # Done
-  
+  if (!quiet) {
+    cat("\n")
+  } # Done
+
   reports <- dplyr::bind_rows(reports_list)
 
   return(reports)
