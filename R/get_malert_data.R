@@ -6,9 +6,18 @@
 #' @param doi String. Zenodo DOI if downloading from Zenodo. Default is the
 #'   doi that will always point to the most recent version: 10.5281/zenodo.597466.
 #' @param cache_path String. Optional path to save the downloaded zip file.
-#'   If provided and the file exists, it will be used instead of re-downloading.
-#'   If `NULL` (default), the downloaded zip and extracted data will be stored in a temporary
-#'   location and removed after extraction.
+#' @param parallel Controls parallel execution. Options are:
+#'   \itemize{
+#'     \item **`"auto"` (default):** Automatically detects and uses a configured
+#'       `mirai` backend if one is available. If not, runs sequentially.
+#'     \item **`TRUE`:** Forces parallel execution. Throws an error if no `mirai`
+#'       daemons are configured.
+#'     \item **`FALSE`:** Forces sequential execution.
+#'   }
+#'   For parallelism, you must configure a backend *before* calling this function,
+#'   for example: `mirai::daemons(2)`. Note that the optimal number of daemons
+#'   is typically 2-4; returns are diminishing after that directly due to the
+#'   overhead of spinning up workers and data transfer.
 #' @param quiet Logical. If `TRUE`, suppresses progress messages and bar. Default is `FALSE`.
 #' @returns A tibble.
 #' @export
@@ -28,12 +37,18 @@
 #'
 #' # Use legacy reading engine (for compatibility, but 5-10x slower)
 #' malert_reports = get_malert_data(source = "github", read_engine = "jsonlite")
+#'
+#' # Use parallel processing (auto-detected if mirai daemons set)
+#' mirai::daemons(2)
+#' malert_reports = get_malert_data(source = "github")
+#' mirai::daemons(0) # Shut down daemons when done
 #' }
 get_malert_data = function(
   source = "zenodo",
   doi = "10.5281/zenodo.597466",
   cache_path = NULL,
   read_engine = "RcppSimdJson",
+  parallel = "auto",
   quiet = FALSE
 ) {
   if (!read_engine %in% c("RcppSimdJson", "jsonlite")) {
@@ -90,46 +105,89 @@ get_malert_data = function(
     message("Reading ", n_years, " files...")
   }
 
-  reports_list <- vector("list", n_years)
+  # Define the reading function based on engine choice
+  reader_func <- if (read_engine == "RcppSimdJson") {
+    read_malert_json_RcppSimdJson
+  } else {
+    read_malert_json_jsonlite
+  }
 
-  for (i in seq_along(years)) {
-    this_year <- years[i]
+  # Prepare file list
+  file_list <- file.path(
+    temp_extract_dir,
+    "home/webuser/webapps/tigaserver/static",
+    paste0("all_reports", years, ".json")
+  )
 
-    # Custom progress display to show current file
+  # Determine if parallel processing should be used
+  use_parallel <- should_use_parallel(parallel)
+
+  list_of_dfs <- if (use_parallel) {
     if (!quiet) {
-      # Calculate available width dynamically
-      console_width <- getOption("width")
-      # Approx len of " [] 100% Reading 2016..." is 25 chars.
-      bar_len <- max(5, console_width - 25)
-
-      pct <- floor((i / n_years) * 100)
-      n_bars <- floor((i / n_years) * bar_len)
-
-      bar_str <- paste0(
-        paste(rep("=", n_bars), collapse = ""),
-        paste(rep(" ", bar_len - n_bars), collapse = "")
-      )
-
-      cat(sprintf("\r[%s] %3d%% Reading %s...", bar_str, pct, this_year))
+      message("Parallel backend detected (mirai). Processing in parallel...")
     }
 
-    this_file = file.path(
-      temp_extract_dir,
-      "home/webuser/webapps/tigaserver/static",
-      paste0("all_reports", this_year, ".json")
+    # Run Map
+    map_res <- mirai::mirai_map(
+      file_list,
+      function(x, .reader, .col_order_func) {
+        requireNamespace("RcppSimdJson", quietly = TRUE)
+        requireNamespace("jsonlite", quietly = TRUE)
+        requireNamespace("data.table", quietly = TRUE)
+        requireNamespace("dplyr", quietly = TRUE)
+
+        # Ensure helper function is available in worker environment
+        # This is needed because workers might not have the package loaded (e.g. devtools::load_all context)
+        assign(
+          "get_expected_column_order",
+          .col_order_func,
+          envir = globalenv()
+        )
+
+        .reader(x)
+      },
+      .args = list(
+        .reader = reader_func,
+        .col_order_func = get_expected_column_order
+      )
     )
 
-    reports_list[[i]] <- if (read_engine == "RcppSimdJson") {
-      read_malert_json_RcppSimdJson(this_file)
+    # Collect results (with progress bar if requested)
+    if (quiet) {
+      map_res[]
     } else {
-      read_malert_json_jsonlite(this_file)
+      map_res[.progress]
     }
-  }
-  if (!quiet) {
-    cat("\n")
-  } # Done
+  } else {
+    # Sequential with progress bar
+    reports_list <- vector("list", n_years)
 
-  reports <- dplyr::bind_rows(reports_list)
+    for (i in seq_along(years)) {
+      this_year <- years[i]
+
+      # Custom progress display
+      if (!quiet) {
+        console_width <- getOption("width")
+        bar_len <- max(5, console_width - 25)
+        pct <- floor((i / n_years) * 100)
+        n_bars <- floor((i / n_years) * bar_len)
+        bar_str <- paste0(
+          paste(rep("=", n_bars), collapse = ""),
+          paste(rep(" ", bar_len - n_bars), collapse = "")
+        )
+        cat(sprintf("\r[%s] %3d%% Reading %s...", bar_str, pct, this_year))
+      }
+
+      reports_list[[i]] <- reader_func(file_list[i])
+    }
+
+    if (!quiet) {
+      cat("\n")
+    } # Done
+    reports_list
+  }
+
+  reports <- dplyr::bind_rows(list_of_dfs)
 
   return(reports)
 }

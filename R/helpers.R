@@ -205,7 +205,9 @@ read_malert_json_RcppSimdJson <- function(file_path) {
     flattened_data$movelab_annotation.site_certainty_category <-
       as.integer(flattened_data$movelab_annotation.site_certainty_category)
   }
-  if ("movelab_annotation_euro.site_certainty_category" %in% names(flattened_data)) {
+  if (
+    "movelab_annotation_euro.site_certainty_category" %in% names(flattened_data)
+  ) {
     flattened_data$movelab_annotation_euro.site_certainty_category <-
       as.integer(flattened_data$movelab_annotation_euro.site_certainty_category)
   }
@@ -218,7 +220,7 @@ read_malert_json_RcppSimdJson <- function(file_path) {
   existing_ordered <- intersect(expected_col_order, current_names)
   remaining_cols <- setdiff(current_names, expected_col_order)
   final_order <- c(existing_ordered, remaining_cols)
-  
+
   # Only reorder if necessary
   if (!identical(current_names, final_order)) {
     flattened_data <- flattened_data[, final_order, drop = FALSE]
@@ -234,6 +236,7 @@ read_malert_json_RcppSimdJson <- function(file_path) {
 #'
 #' @returns Character vector of column names in the expected order.
 #' @keywords internal
+#' @noRd
 get_expected_column_order <- function() {
   c(
     "version_UUID",
@@ -380,5 +383,70 @@ read_malert_json_jsonlite <- function(file_path) {
   # Since we are now extracting the files first (even in the legacy path logic of get_malert_data),
   # we can just read the file directly.
 
-  jsonlite::fromJSON(file_path, flatten = TRUE) %>% dplyr::as_tibble()
+  dplyr::as_tibble(jsonlite::fromJSON(file_path, flatten = TRUE))
+}
+
+#' Check if parallel processing should be used
+#'
+#' @param parallel_arg The value of the `parallel` argument ("auto", TRUE, or FALSE).
+#' @return Logical. TRUE if parallel processing should be used, FALSE otherwise.
+#' @keywords internal
+#' @noRd
+should_use_parallel <- function(parallel_arg) {
+  # 1. Validate argument
+  if (!is.logical(parallel_arg) && !is.character(parallel_arg)) {
+    stop("Argument 'parallel' must be 'auto', TRUE, or FALSE.", call. = FALSE)
+  }
+  if (is.character(parallel_arg) && parallel_arg != "auto") {
+    stop("If 'parallel' is a string, it must be 'auto'.", call. = FALSE)
+  }
+
+  # 2. Handle explicit FALSE
+  if (isFALSE(parallel_arg)) {
+    return(FALSE)
+  }
+
+  # 3. Check for mirai package
+  if (!requireNamespace("mirai", quietly = TRUE)) {
+    if (isTRUE(parallel_arg)) {
+      stop(
+        "Parallel execution requested (parallel = TRUE), but the 'mirai' package is not installed.\n",
+        "Please install it with install.packages('mirai').",
+        call. = FALSE
+      )
+    }
+    # For "auto", fallback gracefully
+    return(FALSE)
+  }
+
+  # 4. Check for active daemons
+  # mirai::status()$connections returns the number of active connections
+  n_daemons <- check_mirai_daemons()
+
+  if (is.null(n_daemons) || n_daemons == 0) {
+    if (isTRUE(parallel_arg)) {
+      stop(
+        "Parallel execution requested (parallel = TRUE), but no 'mirai' daemons are active.\n",
+        "Please configure a backend before calling this function, e.g.:\n",
+        "  mirai::daemons(4)",
+        call. = FALSE
+      )
+    }
+    # For "auto", fallback gracefully
+    return(FALSE)
+  }
+
+  return(TRUE)
+}
+
+#' Check active mirai daemons (internal helper for testing)
+#'
+#' @return Integer number of active connections
+#' @keywords internal
+#' @noRd
+check_mirai_daemons <- function() {
+  tryCatch(
+    mirai::status()$connections,
+    error = function(e) 0
+  )
 }
