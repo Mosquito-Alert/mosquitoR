@@ -1,5 +1,3 @@
-context("get_malert_data caching and file sources")
-
 test_that("get_malert_data works with source as a file path", {
   # Create a minimal mock ZIP file in a temporary directory
   temp_dir <- withr::local_tempdir(pattern = "malert_test_")

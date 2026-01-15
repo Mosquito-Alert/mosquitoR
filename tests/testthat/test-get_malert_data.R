@@ -2,7 +2,6 @@
 # These tests call the actual function with mocked downloads to verify output structure.
 # When jsonlite is replaced with RcppSimdJson, these tests will validate compatibility.
 
-
 # Expected columns definition (shared between mocked and live tests)
 ALL_EXPECTED_COLS <- c(
   # Core Columns
@@ -203,7 +202,7 @@ create_mock_malert_data <- function(year) {
 }
 
 
-test_that("get_malert_data returns correct tibble structure (mocked github)", {
+check_mocked_get_malert_data <- function(engine) {
   # Create a temp directory for our mock data using withr for auto-cleanup
   temp_dir <- withr::local_tempdir(pattern = "mosquitoR-test-")
 
@@ -241,13 +240,12 @@ test_that("get_malert_data returns correct tibble structure (mocked github)", {
     "static",
     paste0("all_reports", 2014:current_year, ".json")
   )
-  
+
   withr::with_dir(temp_dir, {
     utils::zip(zipfile = zip_file, files = json_files, flags = "-r9Xq")
   })
 
   # Mock download.file to use our test zip
-  # Note: We need to define a mock in the package namespace for proper mocking
   local_mocked_bindings(
     download.file = function(url, destfile, ...) {
       file.copy(zip_file, destfile)
@@ -256,9 +254,11 @@ test_that("get_malert_data returns correct tibble structure (mocked github)", {
   )
 
   # Call the ACTUAL get_malert_data function with mocked download
-  # Use capture.output to suppress the "2014", "2015"... print output
   capture.output(
-    result <- suppressMessages(get_malert_data(source = "github"))
+    result <- suppressMessages(get_malert_data(
+      source = "github",
+      read_engine = engine
+    ))
   )
 
   # --- Verify output structure ---
@@ -271,7 +271,6 @@ test_that("get_malert_data returns correct tibble structure (mocked github)", {
   expect_equal(nrow(result), expected_rows)
 
   # 3. Check essential columns exist
-  # 3. Check essential columns exist (all 48 columns)
   for (col in ALL_EXPECTED_COLS) {
     expect_true(
       col %in% names(result),
@@ -346,6 +345,14 @@ test_that("get_malert_data returns correct tibble structure (mocked github)", {
       )
     }
   }
+}
+
+test_that("get_malert_data returns correct tibble structure with RcppSimdJson (mocked github)", {
+  check_mocked_get_malert_data("RcppSimdJson")
+})
+
+test_that("get_malert_data returns correct tibble structure with jsonlite (mocked github)", {
+  check_mocked_get_malert_data("jsonlite")
 })
 
 
@@ -606,7 +613,7 @@ test_that("malert data has correct nested structure (comprehensive validation)",
 # These tests make actual network requests and should only be run in CI
 # or when explicitly enabled via environment variable. Currently run schedule for these is in .github/workflows/malert-live-tests.yml
 
-test_that("get_malert_data downloads and parses GitHub data (live test)", {
+check_live_get_malert_data <- function(engine) {
   # --- Test Configuration ---
   testthat::skip_on_cran()
 
@@ -616,7 +623,7 @@ test_that("get_malert_data downloads and parses GitHub data (live test)", {
   )
 
   # --- 1. Download data from GitHub ---
-  reports <- get_malert_data(source = "github")
+  reports <- get_malert_data(source = "github", read_engine = engine)
 
   # --- 2. Verify structure ---
   expect_s3_class(reports, "tbl_df")
@@ -666,8 +673,14 @@ test_that("get_malert_data downloads and parses GitHub data (live test)", {
   # Ensure critical columns are never NA across the *entire* dataset
   # This serves the same purpose as checking specific years but covers everything
   expect_false(any(is.na(reports$type)), label = "type should never be NA")
-  expect_false(any(is.na(reports$creation_year)), label = "creation_year should never be NA")
-  expect_false(any(is.na(reports$version_UUID)), label = "version_UUID should never be NA")
+  expect_false(
+    any(is.na(reports$creation_year)),
+    label = "creation_year should never be NA"
+  )
+  expect_false(
+    any(is.na(reports$version_UUID)),
+    label = "version_UUID should never be NA"
+  )
 
   # Verify responses structure globally if present
   if ("responses" %in% names(reports)) {
@@ -697,4 +710,50 @@ test_that("get_malert_data downloads and parses GitHub data (live test)", {
     year_count <- sum(reports$creation_year == year, na.rm = TRUE)
     expect_gt(year_count, 0, label = paste("Reports for year", year))
   }
+}
+
+test_that("get_malert_data downloads and parses GitHub data with RcppSimdJson (live test)", {
+  check_live_get_malert_data("RcppSimdJson")
+})
+
+test_that("get_malert_data downloads and parses GitHub data with jsonlite (live test)", {
+  check_live_get_malert_data("jsonlite")
+})
+
+
+test_that("get_malert_data respects read_engine argument", {
+  temp_dir <- withr::local_tempdir(pattern = "malert_engine_test_")
+
+  # Setup Mock Data
+  json_dir <- file.path(temp_dir, "home/webuser/webapps/tigaserver/static")
+  dir.create(json_dir, recursive = TRUE)
+  curr_year <- lubridate::year(lubridate::today())
+  jsonlite::write_json(
+    list(list(version_UUID = "engine-test", creation_year = curr_year)),
+    file.path(json_dir, paste0("all_reports", curr_year, ".json")),
+    auto_unbox = TRUE
+  )
+
+  zip_source <- file.path(temp_dir, "source.zip")
+  withr::with_dir(temp_dir, {
+    utils::zip(zip_source, files = "home", flags = "-r9Xq")
+  })
+
+  # 1. Test Default (RcppSimdJson)
+  res_default <- get_malert_data(source = zip_source)
+  expect_equal(res_default$version_UUID, "engine-test")
+
+  # 2. Test Explicit RcppSimdJson
+  res_rcpp <- get_malert_data(source = zip_source, read_engine = "RcppSimdJson")
+  expect_equal(res_rcpp$version_UUID, "engine-test")
+
+  # 3. Test Explicit jsonlite
+  res_jsonlite <- get_malert_data(source = zip_source, read_engine = "jsonlite")
+  expect_equal(res_jsonlite$version_UUID, "engine-test")
+
+  # 4. Test Invalid Engine
+  expect_error(
+    get_malert_data(source = zip_source, read_engine = "invalid"),
+    "read_engine must be either"
+  )
 })
