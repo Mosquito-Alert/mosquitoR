@@ -2,60 +2,6 @@
 # These tests call the actual function with mocked downloads to verify output structure.
 # When jsonlite is replaced with RcppSimdJson, these tests will validate compatibility.
 
-# Expected columns definition (shared between mocked and live tests)
-ALL_EXPECTED_COLS <- c(
-  # Core Columns
-  "version_UUID",
-  "creation_time",
-  "creation_date",
-  "creation_year",
-  "creation_month",
-  "type",
-  "lon",
-  "lat",
-  "location_is_masked",
-  "tigaprob_cat",
-  "visible",
-  "n_photos",
-  "final_expert_status_text",
-  "responses",
-  "country",
-  "updated_at",
-  "datetime_fix_offset",
-  "point",
-  "nuts_2",
-  "nuts_3",
-  "cached_visible",
-  "session",
-  # Flattened movelab_annotation
-  "movelab_annotation.edited_user_notes",
-  "movelab_annotation.photo_html",
-  "movelab_annotation.tiger_certainty_category",
-  "movelab_annotation.aegypti_certainty_category",
-  "movelab_annotation.score",
-  "movelab_annotation.classification",
-  "movelab_annotation.site_certainty_category",
-  # Flattened movelab_annotation_euro
-  "movelab_annotation_euro.edited_user_notes",
-  "movelab_annotation_euro.photo_html",
-  "movelab_annotation_euro.class_name",
-  "movelab_annotation_euro.class_label",
-  "movelab_annotation_euro.class_id",
-  "movelab_annotation_euro.class_value",
-  "movelab_annotation_euro.site_certainty_category",
-  # Flattened tiger_responses_text
-  "tiger_responses_text.question_6",
-  "tiger_responses_text.question_7",
-  "tiger_responses_text.question_13",
-  "tiger_responses_text.What does your mosquito look like? Check the (i) button and select an answer:",
-  "tiger_responses_text.What does the thorax of your mosquito look like? Check the (i) button and select an answer:",
-  "tiger_responses_text.What does the abdomen of your mosquito look like? Check the (i) button and select an answer:",
-  # Flattened site_responses_text
-  "site_responses_text.question_12",
-  "site_responses_text.question_10",
-  "site_responses_text.question_17"
-)
-
 # Helper function to create mock data matching real API format
 create_mock_malert_data <- function(year) {
   # Create minimal data that matches real API structure
@@ -116,12 +62,12 @@ create_mock_malert_data <- function(year) {
         site_certainty_category = 2L
       ),
       tiger_responses_text = list(
-        question_6 = "q6_text",
-        question_7 = "q7_text",
-        question_13 = "q13_text",
         `What does your mosquito look like? Check the (i) button and select an answer:` = "Striped",
         `What does the thorax of your mosquito look like? Check the (i) button and select an answer:` = "White line",
-        `What does the abdomen of your mosquito look like? Check the (i) button and select an answer:` = "Dark"
+        `What does the abdomen of your mosquito look like? Check the (i) button and select an answer:` = "Dark",
+        question_6 = "q6_text",
+        question_13 = "q13_text",
+        question_7 = "q7_text"
       ),
       site_responses_text = list(
         question_12 = "q12_text",
@@ -185,12 +131,12 @@ create_mock_malert_data <- function(year) {
         site_certainty_category = NA_integer_
       ),
       tiger_responses_text = list(
-        question_6 = NA_character_,
-        question_7 = NA_character_,
-        question_13 = NA_character_,
         `What does your mosquito look like? Check the (i) button and select an answer:` = NA_character_,
         `What does the thorax of your mosquito look like? Check the (i) button and select an answer:` = NA_character_,
-        `What does the abdomen of your mosquito look like? Check the (i) button and select an answer:` = NA_character_
+        `What does the abdomen of your mosquito look like? Check the (i) button and select an answer:` = NA_character_,
+        question_6 = NA_character_,
+        question_13 = NA_character_,
+        question_7 = NA_character_
       ),
       site_responses_text = list(
         question_12 = NA_character_,
@@ -270,15 +216,21 @@ check_mocked_get_malert_data <- function(engine) {
   expected_rows <- 2 * length(2014:current_year)
   expect_equal(nrow(result), expected_rows)
 
-  # 3. Check essential columns exist
-  for (col in ALL_EXPECTED_COLS) {
-    expect_true(
-      col %in% names(result),
-      info = paste("Column", col, "should exist")
-    )
-  }
+  # 3. Check columns matches expected order
+  # We use the internal helper that defines the canonical order
+  expected_full_order <- get_expected_column_order()
+  actual_names <- names(result)
 
-  # 4. Check column types
+  # Verify all actual columns are known columns (are in the expected list)
+  unknown_cols <- setdiff(actual_names, expected_full_order)
+  expect_length(unknown_cols, 0)
+
+  # Verify correct relative ordering
+  # The actual columns should appear in the relative order defined by get_expected_column_order()
+  expected_relative <- intersect(expected_full_order, actual_names)
+  expect_equal(actual_names, expected_relative)
+
+  # 4. Check core column types
   expect_type(result$version_UUID, "character")
   expect_type(result$creation_time, "character")
   expect_type(result$creation_date, "character")
@@ -292,10 +244,18 @@ check_mocked_get_malert_data <- function(engine) {
   expect_type(result$country, "character")
   expect_type(result$point, "character")
 
-  # 5. Check responses is a list-column
+  # 5. Check specific fixed type columns (site_certainty_category should be integer)
+  if ("movelab_annotation.site_certainty_category" %in% actual_names) {
+    expect_type(result$`movelab_annotation.site_certainty_category`, "integer")
+  }
+  if ("movelab_annotation_euro.site_certainty_category" %in% actual_names) {
+    expect_type(result$`movelab_annotation_euro.site_certainty_category`, "integer")
+  }
+
+  # 6. Check responses is a list-column
   expect_type(result$responses, "list")
 
-  # 6. Verify nested response structure (first element)
+  # 7. Verify nested response structure (first element)
   response1 <- result$responses[[1]]
   expect_s3_class(response1, "data.frame")
   response_cols <- c(
@@ -631,7 +591,8 @@ check_live_get_malert_data <- function(engine) {
   expect_gt(ncol(reports), 30) # Should have 48 columns, at least 30
 
   # --- 3. Verify essential columns exist ---
-  for (col in ALL_EXPECTED_COLS) {
+  expected_cols <- get_expected_column_order()
+  for (col in expected_cols) {
     expect_true(
       col %in% colnames(reports),
       info = paste("Column", col, "should exist in live data")
