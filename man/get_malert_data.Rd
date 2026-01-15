@@ -32,7 +32,7 @@ daemons are configured.
 \item \strong{\code{FALSE}:} Forces sequential execution.
 }
 For parallelism, you must configure a backend \emph{before} calling this function,
-for example: \code{mirai::daemons(4)}. Note that the optimal number of daemons
+for example: \code{mirai::daemons(2)}. Note that the optimal number of daemons
 is typically 2-4; returns are diminishing after that directly due to the
 overhead of spinning up workers and data transfer.}
 
