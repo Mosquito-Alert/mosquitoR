@@ -9,14 +9,16 @@
 #'   If provided and the file exists, it will be used instead of re-downloading.
 #'   If `NULL` (default), the downloaded zip and extracted data will be stored in a temporary
 #'   location and removed after extraction.
-#' @param read_engine String. Engine to use for reading and parsing JSON files.
-#'   Options are "RcppSimdJson" (default, 5-10x faster) or "jsonlite" (legacy behavior).
+#' @param quiet Logical. If `TRUE`, suppresses progress messages and bar. Default is `FALSE`.
 #' @returns A tibble.
 #' @export
 #' @examples
 #' \dontrun{
-#' # Standard download from GitHub
+#' # Standard download from GitHub (with progress bar)
 #' malert_reports = get_malert_data(source = "github")
+#'
+#' # Silent execution
+#' malert_reports = get_malert_data(source = "github", quiet = TRUE)
 #'
 #' # Download and cache locally
 #' malert_reports = get_malert_data(source = "github", cache_path = "all_reports.zip")
@@ -31,7 +33,8 @@ get_malert_data = function(
   source = "zenodo",
   doi = "10.5281/zenodo.597466",
   cache_path = NULL,
-  read_engine = "RcppSimdJson"
+  read_engine = "RcppSimdJson",
+  quiet = FALSE
 ) {
   if (!read_engine %in% c("RcppSimdJson", "jsonlite")) {
     stop("read_engine must be either 'RcppSimdJson' or 'jsonlite'")
@@ -46,7 +49,7 @@ get_malert_data = function(
   } else {
     # It's a keyword source, check cache first
     if (!is.null(cache_path) && file.exists(cache_path)) {
-      message("Using cached file: ", cache_path)
+      if (!quiet) message("Using cached file: ", cache_path)
       zip_path <- cache_path
     } else {
       # Need to download
@@ -78,22 +81,43 @@ get_malert_data = function(
     }
   )
 
-  reports = bind_rows(lapply(
-    2014:lubridate::year(lubridate::today()),
-    function(this_year) {
-      this_file = file.path(
-        temp_extract_dir,
-        "home/webuser/webapps/tigaserver/static",
-        paste0("all_reports", this_year, ".json")
+  years <- 2014:lubridate::year(lubridate::today())
+  n_years <- length(years)
+  
+  if (!quiet) message("Reading ", n_years, " files...")
+  
+  reports_list <- vector("list", n_years)
+  
+  for (i in seq_along(years)) {
+    this_year <- years[i]
+    
+    # Custom progress display to show current file
+    if (!quiet) {
+      # Format: [===   ] 30% Reading 2016...
+      pct <- floor((i / n_years) * 100)
+      n_bars <- floor((i / n_years) * 20)
+      bar_str <- paste0(
+        paste(rep("=", n_bars), collapse = ""),
+        paste(rep(" ", 20 - n_bars), collapse = "")
       )
-
-      if (read_engine == "RcppSimdJson") {
-        read_malert_json_RcppSimdJson(this_file)
-      } else {
-        read_malert_json_jsonlite(this_file)
-      }
+      cat(sprintf("\r[%s] %3d%% Reading %s...", bar_str, pct, this_year))
     }
-  ))
+    
+    this_file = file.path(
+      temp_extract_dir,
+      "home/webuser/webapps/tigaserver/static",
+      paste0("all_reports", this_year, ".json")
+    )
+
+    reports_list[[i]] <- if (read_engine == "RcppSimdJson") {
+      read_malert_json_RcppSimdJson(this_file)
+    } else {
+      read_malert_json_jsonlite(this_file)
+    }
+  }
+  if (!quiet) cat("\n") # Done
+  
+  reports <- dplyr::bind_rows(reports_list)
 
   return(reports)
 }

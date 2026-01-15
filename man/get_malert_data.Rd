@@ -2,22 +2,52 @@
 % Please edit documentation in R/get_malert_data.R
 \name{get_malert_data}
 \alias{get_malert_data}
-\title{Download Mosquito Alert report data from GitHub}
+\title{Download Mosquito Alert report data from GitHub or Zenodo}
 \usage{
-get_malert_data(source = "zenodo", doi = "10.5281/zenodo.597466")
+get_malert_data(
+  source = "zenodo",
+  doi = "10.5281/zenodo.597466",
+  cache_path = NULL,
+  read_engine = "RcppSimdJson",
+  quiet = FALSE
+)
 }
 \arguments{
-\item{source}{String. Source to download from. Options are github or zenodo.}
+\item{source}{String. Source to download from. Options are "github" or "zenodo".
+If a local file path to a zip archive is provided (e.g., a previously cached
+"all_reports.zip"), it will be used directly without downloading.}
 
-\item{doi}{String. Zenodo doi if downloading from Zenodo. Default is the doi that will always point to the most recent version: 10.5281/zenodo.597466.}
+\item{doi}{String. Zenodo DOI if downloading from Zenodo. Default is the
+doi that will always point to the most recent version: 10.5281/zenodo.597466.}
+
+\item{cache_path}{String. Optional path to save the downloaded zip file.
+If provided and the file exists, it will be used instead of re-downloading.
+If \code{NULL} (default), the downloaded zip and extracted data will be stored in a temporary
+location and removed after extraction.}
+
+\item{quiet}{Logical. If \code{TRUE}, suppresses progress messages and bar. Default is \code{FALSE}.}
 }
 \value{
 A tibble.
 }
 \description{
-Download Mosquito Alert report data from GitHub
+Download Mosquito Alert report data from GitHub or Zenodo
 }
 \examples{
+\dontrun{
+# Standard download from GitHub (with progress bar)
 malert_reports = get_malert_data(source = "github")
-malert_reports
+
+# Silent execution
+malert_reports = get_malert_data(source = "github", quiet = TRUE)
+
+# Download and cache locally
+malert_reports = get_malert_data(source = "github", cache_path = "all_reports.zip")
+
+# Use cached file directly
+malert_reports = get_malert_data(source = "all_reports.zip")
+
+# Use legacy reading engine (for compatibility, but 5-10x slower)
+malert_reports = get_malert_data(source = "github", read_engine = "jsonlite")
+}
 }

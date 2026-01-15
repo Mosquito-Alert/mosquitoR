@@ -90,6 +90,7 @@ read_malert_json_RcppSimdJson <- function(file_path) {
         e$message,
         ". Falling back to jsonlite."
       )
+      # Fallback to jsonlite if RcppSimdJson fails (e.g. malformed JSON)
       return(jsonlite::fromJSON(file_path, flatten = TRUE))
     }
   )
