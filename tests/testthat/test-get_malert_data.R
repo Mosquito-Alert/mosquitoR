@@ -364,8 +364,13 @@ test_that("get_malert_data treats keyword with .zip extension as a file source",
   temp_dir <- withr::local_tempdir()
   withr::local_dir(temp_dir)
   
-  # Create a dummy file named 'github.zip'
-  file.create("github.zip")
+  # Create a valid (but empty of relevant data) zip file
+  dummy_file <- file.path(temp_dir, "dummy.txt")
+  file.create(dummy_file)
+  
+  withr::with_dir(temp_dir, {
+    utils::zip("github.zip", "dummy.txt", flags = "-q")
+  })
   
   # When source="github.zip", it matches keyword part but has extension.
   # It should be treated as a file source.
@@ -390,7 +395,7 @@ test_that("get_malert_data requires .zip extension for local files", {
   
   expect_error(
     get_malert_data(source = "mydata.txt"),
-    "Local source must be 'github', 'zenodo', or a path to a .zip file"
+    "Source must be 'github', 'zenodo', or a path to a .zip file"
   )
 })
 
