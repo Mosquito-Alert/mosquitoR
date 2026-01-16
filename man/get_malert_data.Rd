@@ -2,22 +2,74 @@
 % Please edit documentation in R/get_malert_data.R
 \name{get_malert_data}
 \alias{get_malert_data}
-\title{Download Mosquito Alert report data from GitHub}
+\title{Download Mosquito Alert report data from GitHub or Zenodo}
 \usage{
-get_malert_data(source = "zenodo", doi = "10.5281/zenodo.597466")
+get_malert_data(
+  source = "zenodo",
+  doi = "10.5281/zenodo.597466",
+  cache_path = NULL,
+  parallel = "auto",
+  quiet = FALSE,
+  read_engine = "RcppSimdJson"
+)
 }
 \arguments{
-\item{source}{String. Source to download from. Options are github or zenodo.}
+\item{source}{String. Source to download from. Options are "github" or "zenodo".
+If a local file path to a zip archive is provided (e.g., a previously cached
+"all_reports.zip"), it will be used directly without downloading.}
 
-\item{doi}{String. Zenodo doi if downloading from Zenodo. Default is the doi that will always point to the most recent version: 10.5281/zenodo.597466.}
+\item{doi}{String. Zenodo DOI if downloading from Zenodo. Default is the
+doi that will always point to the most recent version: 10.5281/zenodo.597466.}
+
+\item{cache_path}{String. Optional path to save the downloaded zip file.}
+
+\item{parallel}{Controls parallel execution. Options are:
+\itemize{
+\item \strong{\code{"auto"} (default):} Automatically detects and uses a configured
+\code{mirai} backend if one is available. If not, runs sequentially.
+\item \strong{\code{TRUE}:} Forces parallel execution. Throws an error if no \code{mirai}
+daemons are configured.
+\item \strong{\code{FALSE}:} Forces sequential execution.
+}
+For parallelism, you must configure a backend \emph{before} calling this function,
+for example: \code{mirai::daemons(2)}. Note that the optimal number of daemons
+is typically 2-4; returns are diminishing after that directly due to the
+overhead of spinning up workers and data transfer.}
+
+\item{quiet}{Logical. If \code{TRUE}, suppresses progress messages and bar. Default is \code{FALSE}.}
+
+\item{read_engine}{String. Controls which JSON parsing engine to use. Options are:
+\itemize{
+\item \strong{\code{"RcppSimdJson"} (default):} Uses \code{RcppSimdJson} for very fast parsing (5-10x faster). Output is matched with the legacy engine and verified with tests.
+\item \strong{\code{"jsonlite"}:} Uses the legacy \code{jsonlite} parser. More robust but significantly slower.
+}}
 }
 \value{
 A tibble.
 }
 \description{
-Download Mosquito Alert report data from GitHub
+Download Mosquito Alert report data from GitHub or Zenodo
 }
 \examples{
+\dontrun{
+# Standard download from GitHub (with progress bar)
 malert_reports = get_malert_data(source = "github")
-malert_reports
+
+# Silent execution
+malert_reports = get_malert_data(source = "github", quiet = TRUE)
+
+# Download and cache locally
+malert_reports = get_malert_data(source = "github", cache_path = "all_reports.zip")
+
+# Use cached file directly
+malert_reports = get_malert_data(source = "all_reports.zip")
+
+# Use legacy reading engine (for compatibility, but 5-10x slower)
+malert_reports = get_malert_data(source = "github", read_engine = "jsonlite")
+
+# Use parallel processing (auto-detected if mirai daemons set)
+mirai::daemons(2)
+malert_reports = get_malert_data(source = "github")
+mirai::daemons(0) # Shut down daemons when done
+}
 }

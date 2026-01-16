@@ -18,6 +18,8 @@ A tibble.
 Download device information from Senscape server using http get request.
 }
 \examples{
+\dontrun{
 my_devices = get_senscape_devices(api_key = Sys.getenv("SENSCAPE_API_KEY"))
 my_devices
+}
 }

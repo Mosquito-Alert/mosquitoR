@@ -5,8 +5,10 @@
 #' @returns A tibble.
 #' @export
 #' @examples
+#' \dontrun{
 #' my_devices = get_senscape_devices(api_key = Sys.getenv("SENSCAPE_API_KEY"))
 #' my_devices
+#' }
 get_senscape_devices = function(api_key, page_size = 10){
 
   data_req = httr::GET("https://senscape.eu/api/devices", httr::add_headers('authorization' = api_key))
