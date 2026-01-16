@@ -19,6 +19,11 @@
 #'   is typically 2-4; returns are diminishing after that directly due to the
 #'   overhead of spinning up workers and data transfer.
 #' @param quiet Logical. If `TRUE`, suppresses progress messages and bar. Default is `FALSE`.
+#' @param read_engine String. Controls which JSON parsing engine to use. Options are:
+#'   \itemize{
+#'     \item **`"RcppSimdJson"` (default):** Uses `RcppSimdJson` for very fast parsing (5-10x faster). Output is matched with the legacy engine and verified with tests.
+#'     \item **`"jsonlite"`:** Uses the legacy `jsonlite` parser. More robust but significantly slower.
+#'   }
 #' @returns A tibble.
 #' @export
 #' @examples
@@ -47,9 +52,9 @@ get_malert_data = function(
   source = "zenodo",
   doi = "10.5281/zenodo.597466",
   cache_path = NULL,
-  read_engine = "RcppSimdJson",
   parallel = "auto",
-  quiet = FALSE
+  quiet = FALSE,
+  read_engine = "RcppSimdJson"
 ) {
   if (!read_engine %in% c("RcppSimdJson", "jsonlite")) {
     stop("read_engine must be either 'RcppSimdJson' or 'jsonlite'")

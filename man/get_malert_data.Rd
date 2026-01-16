@@ -8,9 +8,9 @@ get_malert_data(
   source = "zenodo",
   doi = "10.5281/zenodo.597466",
   cache_path = NULL,
-  read_engine = "RcppSimdJson",
   parallel = "auto",
-  quiet = FALSE
+  quiet = FALSE,
+  read_engine = "RcppSimdJson"
 )
 }
 \arguments{
@@ -37,6 +37,12 @@ is typically 2-4; returns are diminishing after that directly due to the
 overhead of spinning up workers and data transfer.}
 
 \item{quiet}{Logical. If \code{TRUE}, suppresses progress messages and bar. Default is \code{FALSE}.}
+
+\item{read_engine}{String. Controls which JSON parsing engine to use. Options are:
+\itemize{
+\item \strong{\code{"RcppSimdJson"} (default):} Uses \code{RcppSimdJson} for very fast parsing (5-10x faster). Output is matched with the legacy engine and verified with tests.
+\item \strong{\code{"jsonlite"}:} Uses the legacy \code{jsonlite} parser. More robust but significantly slower.
+}}
 }
 \value{
 A tibble.
