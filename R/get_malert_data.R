@@ -136,6 +136,9 @@ get_malert_data = function(
   # Determine if parallel processing should be used
   use_parallel <- should_use_parallel(parallel)
 
+  # Get expected column order once, in the main process
+  col_order <- get_expected_column_order()
+
   list_of_dfs <- if (use_parallel) {
     if (!quiet) {
       message("Parallel backend detected (mirai). Processing in parallel...")
@@ -144,26 +147,31 @@ get_malert_data = function(
     # Run Map
     map_res <- mirai::mirai_map(
       file_list,
-      function(x, .reader, .col_order_func) {
+      function(x, .reader, .col_order) {
         requireNamespace("RcppSimdJson", quietly = TRUE)
         requireNamespace("jsonlite", quietly = TRUE)
         requireNamespace("data.table", quietly = TRUE)
         requireNamespace("dplyr", quietly = TRUE)
-
-        # Ensure helper function is available in the reader's environment
-        # This avoids assigning into the global environment while still
-        # allowing .reader to resolve get_expected_column_order by name.
-        assign(
-          "get_expected_column_order",
-          .col_order_func,
-          envir = environment(.reader)
-        )
-
-        .reader(x)
+        
+        # When using RcppSimdJson, pass col_order. 
+        # When using jsonlite (legacy), the col_order arg will be ignored 
+        # because the function signature doesn't have it (or ... handles it).
+        # We need to check if .reader accepts col_order or simpler, 
+        # just handle RcppSimdJson explicitly or wrap it.
+        # Since we control .reader, we know RcppSimdJson reader takes it.
+        # jsonlite reader does not, so let's check formalArgs or just try/catch?
+        # Better: The helper read_malert_json_RcppSimdJson takes it.
+        # But read_malert_json_jsonlite does NOT.
+        
+        if ("col_order" %in% names(formals(.reader))) {
+          .reader(x, col_order = .col_order)
+        } else {
+          .reader(x)
+        }
       },
       .args = list(
         .reader = reader_func,
-        .col_order_func = get_expected_column_order
+        .col_order = col_order
       )
     )
 
@@ -193,7 +201,11 @@ get_malert_data = function(
         cat(sprintf("\r[%s] %3d%% Reading %s...", bar_str, pct, this_year))
       }
 
-      reports_list[[i]] <- reader_func(file_list[i])
+      if ("col_order" %in% names(formals(reader_func))) {
+          reports_list[[i]] <- reader_func(file_list[i], col_order = col_order)
+      } else {
+          reports_list[[i]] <- reader_func(file_list[i])
+      }
     }
 
     if (!quiet) {
@@ -206,3 +218,5 @@ get_malert_data = function(
 
   return(reports)
 }
+
+if (getRversion() >= "2.15.1") utils::globalVariables(c(".progress"))

@@ -69,9 +69,11 @@ download_malert_zip <- function(source, doi, destfile) {
 #' Read a single Mosquito Alert JSON file using RcppSimdJson (internal helper)
 #'
 #' @param file_path String. Path to the .json file to read.
+#' @param col_order Character vector. Expected column order for output alignment.
 #' @returns A tibble containing the flattened data for that file (year).
 #' @keywords internal
-read_malert_json_RcppSimdJson <- function(file_path) {
+#' @noRd
+read_malert_json_RcppSimdJson <- function(file_path, col_order = NULL) {
   # Skip if file doesn't exist (e.g., future years)
   if (!file.exists(file_path)) {
     return(NULL)
@@ -132,7 +134,7 @@ read_malert_json_RcppSimdJson <- function(file_path) {
 
     # Get schema from first valid element
     schema <- names(first_valid)
-    na_row <- setNames(as.list(rep(NA, length(schema))), schema)
+    na_row <- stats::setNames(as.list(rep(NA, length(schema))), schema)
 
     # Fill strictly empty elements with NA rows
     if (any(is_empty)) {
@@ -180,6 +182,7 @@ read_malert_json_RcppSimdJson <- function(file_path) {
     flattened_data$tiger_responses <- NULL
   }
 
+  # Remove intermediate struct columns if they remained as data.frames
   for (col in c("tiger_responses_text", "site_responses_text")) {
     if (
       col %in% names(flattened_data) && is.data.frame(flattened_data[[col]])
@@ -215,15 +218,17 @@ read_malert_json_RcppSimdJson <- function(file_path) {
   # Reorder columns to match jsonlite output
   # This is done per-file (before bind_rows) for better performance than
   # reordering the full combined dataset
-  expected_col_order <- get_expected_column_order()
-  current_names <- names(flattened_data)
-  existing_ordered <- intersect(expected_col_order, current_names)
-  remaining_cols <- setdiff(current_names, expected_col_order)
-  final_order <- c(existing_ordered, remaining_cols)
+  if (!is.null(col_order)) {
+    expected_col_order <- col_order
+    current_names <- names(flattened_data)
+    existing_ordered <- intersect(expected_col_order, current_names)
+    remaining_cols <- setdiff(current_names, expected_col_order)
+    final_order <- c(existing_ordered, remaining_cols)
 
-  # Only reorder if necessary
-  if (!identical(current_names, final_order)) {
-    flattened_data <- flattened_data[, final_order, drop = FALSE]
+    # Only reorder if necessary
+    if (!identical(current_names, final_order)) {
+      flattened_data <- flattened_data[, final_order, drop = FALSE]
+    }
   }
 
   dplyr::as_tibble(flattened_data)
@@ -238,132 +243,17 @@ read_malert_json_RcppSimdJson <- function(file_path) {
 #' @keywords internal
 #' @noRd
 get_expected_column_order <- function() {
-  c(
-    "version_UUID",
-    "creation_time",
-    "creation_date",
-    "creation_day_since_launch",
-    "creation_year",
-    "creation_month",
-    "site_cat",
-    "type",
-    "lon",
-    "lat",
-    "location_is_masked",
-    "tigaprob_cat",
-    "latest_version",
-    "visible",
-    "n_photos",
-    "final_expert_status_text",
-    "responses",
-    "country",
-    "updated_at",
-    "datetime_fix_offset",
-    "point",
-    "nuts_2",
-    "nuts_3",
-    "cached_visible",
-    "session",
-    "movelab_annotation.edited_user_notes",
-    "movelab_annotation.photo_html",
-    "movelab_annotation.tiger_certainty_category",
-    "movelab_annotation.aegypti_certainty_category",
-    "movelab_annotation.score",
-    "movelab_annotation.classification",
-    "movelab_annotation.site_certainty_category",
-    "movelab_annotation_euro.edited_user_notes",
-    "movelab_annotation_euro.photo_html",
-    "movelab_annotation_euro.class_name",
-    "movelab_annotation_euro.class_label",
-    "movelab_annotation_euro.class_id",
-    "movelab_annotation_euro.class_value",
-    "movelab_annotation_euro.site_certainty_category",
-    "tiger_responses.q1_response",
-    "tiger_responses.q2_response",
-    "tiger_responses.q3_response",
-    "tiger_responses_text.¿Es pequeño y negro con rayas blancas?",
-    "tiger_responses_text.¿Tiene una raya blanca en la cabeza y en el tórax?",
-    "tiger_responses_text.¿Tiene rayas blancas en el abdomen y en las patas?",
-    "tiger_responses_text.És petit i negre amb ratlles blanques?",
-    "tiger_responses_text.Té una ratlla blanca al cap i al tòrax?",
-    "tiger_responses_text.Té ratlles blanques a l'abdomen i a les potes?",
-    "tiger_responses_text.Is it small and black with white stripes?",
-    "tiger_responses_text.Does it have a white stripe on the head and thorax?",
-    "tiger_responses_text.Does it have white stripes on the abdomen and legs?",
-    "site_responses.q1_response",
-    "site_responses.q2_response",
-    "site_responses_text.Tipo de lugar de cría",
-    "site_responses_text.¿Contiene agua estancada?",
-    "site_responses_text.¿Contiene larvas o pupas de mosquito (de cualquier especie)?",
-    "site_responses_text.Have you seen mosquito larvae (not necessarily tiger mosquito) inside?",
-    "site_responses_text.Type of breeding site",
-    "site_responses_text.Does it have stagnant water inside?",
-    "site_responses_text.Conté larves o pupes de mosquit (de qualsevol espècie)?",
-    "site_responses_text.Selecciona lloc de cria",
-    "site_responses_text.Conté aigua estancada?",
-    "site_responses.q1_response_new",
-    "site_responses.q2_response_new",
-    "site_responses.q3_response_new",
-    "site_responses_text.¿Has visto mosquitos cerca (a <10 metros)?",
-    "site_responses_text.¿Se encuentra en la vía pública?",
-    "site_responses_text.Contiene agua estancada y/o larvas o pupas de mosquito (cualquier especie)?",
-    "site_responses_text.Is it in a public area?",
-    "site_responses_text.Does it contain stagnant water and/or mosquito larvae or pupae (any mosquito species)?",
-    "site_responses_text.Have you seen adult mosquitoes nearby (<10 meters)?",
-    "site_responses_text.Has vist mosquits a prop (a <10metres)?",
-    "site_responses_text.Es troba a la via pública?",
-    "site_responses_text.Conté aigua estancada y/o larves o pupes de mosquit (qualsevol espècie)?",
-    "tiger_responses_text.¿Cómo es tu mosquito? Consulta el botón (i) y selecciona una respuesta:",
-    "tiger_responses_text.¿Cómo es el tórax de tu mosquito? Consulta el botón (i) y selecciona una respuesta:",
-    "tiger_responses_text.¿Cómo es el abdomen de tu mosquito? Consulta el botón (i) y selecciona una respuesta:",
-    "tiger_responses_text.What does your mosquito look like? Check the (i) button and select an answer:",
-    "tiger_responses_text.What does the thorax of your mosquito look like? Check the (i) button and select an answer:",
-    "tiger_responses_text.What does the abdomen of your mosquito look like? Check the (i) button and select an answer:",
-    "tiger_responses_text.De quin color és? Consulta el botó (i) i selecciona una resposta:",
-    "tiger_responses_text.Mira just després del seu cap, al tòrax. Té una sola línia blanca? Consulta el botó (i) i selecciona una resposta:",
-    "tiger_responses_text.Com és l'abdomen del mosquit? Consulta el botó (i) i selecciona una resposta:",
-    "tiger_responses_text.Com és el teu mosquit? Consulta el botó (i) i selecciona una resposta:",
-    "tiger_responses_text.Com és el tòrax del teu mosquit? Consulta el botó (i) i selecciona una resposta:",
-    "tiger_responses_text.Com és l'abdomen del teu mosquit? Consulta el botó (i) i selecciona una resposta:",
-    "tiger_responses_text.¿De qué color es? Consulta el botón (i) y selecciona una respuesta:",
-    "tiger_responses_text.Mira justo después de su cabeza, en el tórax. ¿Tiene una sola línea blanca? Consulta el botón (i) y selecciona una respuesta:",
-    "tiger_responses_text.¿Cómo es el abdomen del mosquito? Consulta el botón (i) y selecciona una respuesta:",
-    "tiger_responses_text.What color is your mosquito? Check the (i) button and select an answer:",
-    "tiger_responses_text.Look right after the head, at the thorax. Does it have a single white line? Check the (i) button and select an answer:",
-    "tiger_responses_text.你的蚊子是什麼顏色？檢查(i)按鈕，然後選擇一個答案：",
-    "tiger_responses_text.蚊子的胸部是什麼樣子？是否帶有一條白色條紋？檢查(i)按鈕，然後選擇答案：",
-    "tiger_responses_text.蚊子的腹部是什麼樣子？檢查(i)按鈕，然後選擇一個答案：",
-    "site_responses_text.Conté aigua estancada i/o larves o pupes de mosquit (qualsevol espècie)?",
-    "site_responses_text.¿Es un imbornal o alcantarilla?",
-    "site_responses_text.¿Has visto mosquitos cerca (a menos de 10 metros)?",
-    "site_responses_text.¿Contiene agua estancada y/o larvas de mosquito?",
-    "site_responses_text.És un embornal o claveguera?",
-    "site_responses_text.Conté aigua estancada i/o larves de mosquit?",
-    "site_responses_text.Has vist mosquits a prop (a menys de 10 metres)?",
-    "site_responses_text.Is this a storm drain or sewer?",
-    "site_responses_text.Have you seen mosquitoes nearby (<10 meters)?",
-    "site_responses_text.Does it contain stagnant water and/or mosquito larvae?",
-    "site_responses_text.這繁殖地是否排水渠或下水道？",
-    "site_responses_text.你有否在周遭地方見到成年蚊子(少於十米內)？",
-    "site_responses_text.這繁殖地是否公共空間？",
-    "site_responses_text.這繁殖地有沒有藏有積水，和/或任何蚊子品種旳幼蟲或蛹？",
-    "tiger_responses_text.question_6",
-    "tiger_responses_text.¿Como era el mosquito?",
-    "tiger_responses_text.question_13",
-    "tiger_responses_text.question_7",
-    "site_responses_text.question_12",
-    "site_responses_text.question_10",
-    "tiger_responses_text.question_1",
-    "tiger_responses_text.question_2",
-    "tiger_responses_text.question_4",
-    "tiger_responses_text.question_5",
-    "tiger_responses_text.question_3",
-    "site_responses_text.question_17",
-    "site_responses_text.question_6",
-    "site_responses_text.question_13",
-    "site_responses",
-    "site_responses_text"
+  json_path <- system.file(
+    "extdata",
+    "expected_columns.json",
+    package = "mosquitoR"
   )
+
+  if (!file.exists(json_path)) {
+    stop("expected_columns.json not found")
+  }
+
+  jsonlite::read_json(json_path, simplifyVector = TRUE)
 }
 
 #' Read a single Mosquito Alert JSON file using jsonlite (internal helper with previous behavior)
@@ -437,6 +327,11 @@ should_use_parallel <- function(parallel_arg) {
   }
 
   return(TRUE)
+}
+
+# Silence global variable warnings
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c("setNames", "."))
 }
 
 #' Check active mirai daemons (internal helper for testing)
