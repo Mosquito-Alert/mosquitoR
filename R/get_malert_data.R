@@ -61,8 +61,17 @@ get_malert_data = function(
   }
 
   # Determine if source is already a file path or a keyword
-  is_file_source <- file.exists(source) &&
-    !tolower(source) %in% c("github", "zenodo")
+  # Check keyword first to avoid file system check for known keywords
+  source_lower <- tolower(source)
+  if (source_lower %in% c("github", "zenodo")) {
+    is_file_source <- FALSE
+    source <- source_lower # Normalize keyword
+  } else {
+    is_file_source <- file.exists(source)
+    if (is_file_source && !grepl("\\.zip$", source, ignore.case = TRUE)) {
+      stop("Source must be 'github', 'zenodo', or a path to a .zip file previously downloaded from github or zenodo (e.g. cached with `cache_path` argument)")
+    }
+  }
 
   if (is_file_source) {
     zip_path <- source
@@ -141,12 +150,13 @@ get_malert_data = function(
         requireNamespace("data.table", quietly = TRUE)
         requireNamespace("dplyr", quietly = TRUE)
 
-        # Ensure helper function is available in worker environment
-        # This is needed because workers might not have the package loaded (e.g. devtools::load_all context)
+        # Ensure helper function is available in the reader's environment
+        # This avoids assigning into the global environment while still
+        # allowing .reader to resolve get_expected_column_order by name.
         assign(
           "get_expected_column_order",
           .col_order_func,
-          envir = globalenv()
+          envir = environment(.reader)
         )
 
         .reader(x)

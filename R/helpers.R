@@ -61,7 +61,7 @@ download_malert_zip <- function(source, doi, destfile) {
     return(destfile)
   } else {
     stop(
-      "Error: This function currently only supports downloads from Github or Zenodo"
+      "Error: This function currently only supports downloads from GitHub or Zenodo"
     )
   }
 }

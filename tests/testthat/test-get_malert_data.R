@@ -317,10 +317,80 @@ test_that("get_malert_data returns correct tibble structure with jsonlite (mocke
 
 
 test_that("get_malert_data validates source parameter", {
-  # Test with invalid source - should error
   expect_error(
     get_malert_data(source = "invalid_source"),
-    regexp = "This function currently only supports downloads from Github or Zenodo"
+    regexp = "only supports downloads"
+  )
+})
+
+
+test_that("get_malert_data handles case-insensitive source keywords", {
+  # Mock download_malert_zip to succeed
+  local_mocked_bindings(
+    download_malert_zip = function(source, ...) {
+      expect_true(source %in% c("github", "zenodo"), info = "Source should be normalized to lowercase")
+      # Create a dummy zip to prevent actual extraction failure if we reached that point
+      # but we actually expect it to fail later or we just check the call
+      stop("Normalization check passed")
+    }
+  )
+  
+  expect_error(get_malert_data(source = "GitHub"), "Normalization check passed")
+  expect_error(get_malert_data(source = "ZENODO"), "Normalization check passed")
+})
+
+
+test_that("get_malert_data prioritizes keywords over local files", {
+  temp_dir <- withr::local_tempdir()
+  withr::local_dir(temp_dir)
+  
+  # Create a file named 'github' (no extension, just the name)
+  file.create("github")
+  
+  # Mock download_malert_zip to see if it's called
+  local_mocked_bindings(
+    download_malert_zip = function(source, ...) {
+      expect_equal(source, "github")
+      stop("Prioritized keyword over local file")
+    }
+  )
+  
+  # Even if file 'github' exists, passing source='github' should trigger download logic
+  expect_error(get_malert_data(source = "github"), "Prioritized keyword over local file")
+})
+
+
+test_that("get_malert_data treats keyword with .zip extension as a file source", {
+  temp_dir <- withr::local_tempdir()
+  withr::local_dir(temp_dir)
+  
+  # Create a dummy file named 'github.zip'
+  file.create("github.zip")
+  
+  # When source="github.zip", it matches keyword part but has extension.
+  # It should be treated as a file source.
+  
+  # Mock download_malert_zip to ensure it is NOT called
+  local_mocked_bindings(
+    download_malert_zip = function(...) stop("Should not be called")
+  )
+  
+  # It should NOT call download_malert_zip.
+  # It will try to unzip 'github.zip' and likely return an empty result or error
+  # depending on unzip behavior for empty files.
+  expect_error(get_malert_data(source = "github.zip"), NA) # Should not be "Should not be called" error
+})
+
+
+test_that("get_malert_data requires .zip extension for local files", {
+  temp_dir <- withr::local_tempdir()
+  withr::local_dir(temp_dir)
+  
+  file.create("mydata.txt")
+  
+  expect_error(
+    get_malert_data(source = "mydata.txt"),
+    "Local source must be 'github', 'zenodo', or a path to a .zip file"
   )
 })
 
