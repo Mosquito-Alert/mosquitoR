@@ -407,7 +407,7 @@ should_use_parallel <- function(parallel_arg) {
   }
 
   # 3. Check for mirai package
-  if (!requireNamespace("mirai", quietly = TRUE)) {
+  if (!check_mirai_installed()) {
     if (isTRUE(parallel_arg)) {
       stop(
         "Parallel execution requested (parallel = TRUE), but the 'mirai' package is not installed.\n",
@@ -449,4 +449,13 @@ check_mirai_daemons <- function() {
     mirai::status()$connections,
     error = function(e) 0
   )
+}
+
+#' Check if mirai is installed (internal helper for testing)
+#'
+#' @return Logical
+#' @keywords internal
+#' @noRd
+check_mirai_installed <- function() {
+  requireNamespace("mirai", quietly = TRUE)
 }

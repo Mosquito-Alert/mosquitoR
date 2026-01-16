@@ -13,9 +13,10 @@ test_that("should_use_parallel handles explicit FALSE", {
 })
 
 test_that("should_use_parallel handles missing mirai package", {
-  # Mock requireNamespace to return FALSE
-  m <- mockery::mock(FALSE, cycle = TRUE)
-  mockery::stub(should_use_parallel, "requireNamespace", m)
+  # Mock check_mirai_installed to return FALSE
+  local_mocked_bindings(
+    check_mirai_installed = function() FALSE
+  )
   
   # "auto" should fallback to FALSE
   expect_false(should_use_parallel("auto"))
@@ -25,14 +26,11 @@ test_that("should_use_parallel handles missing mirai package", {
 })
 
 test_that("should_use_parallel handles no active daemons", {
-  # Mock requireNamespace to return TRUE
-  m_req <- mockery::mock(TRUE, cycle = TRUE)
-  
-  # Mock check_mirai_daemons to return 0
-  m_daemons <- mockery::mock(0, cycle = TRUE)
-  
-  mockery::stub(should_use_parallel, "requireNamespace", m_req)
-  mockery::stub(should_use_parallel, "check_mirai_daemons", m_daemons)
+  # Mock check_mirai_installed and check_mirai_daemons
+  local_mocked_bindings(
+    check_mirai_installed = function() TRUE,
+    check_mirai_daemons = function() 0
+  )
   
   # "auto" should fallback to FALSE
   expect_false(should_use_parallel("auto"))
@@ -42,14 +40,11 @@ test_that("should_use_parallel handles no active daemons", {
 })
 
 test_that("should_use_parallel enables parallel when ready", {
-  # Mock requireNamespace to return TRUE
-  m_req <- mockery::mock(TRUE, cycle = TRUE)
-  
-  # Mock check_mirai_daemons to return 2
-  m_daemons <- mockery::mock(2, cycle = TRUE)
-  
-  mockery::stub(should_use_parallel, "requireNamespace", m_req)
-  mockery::stub(should_use_parallel, "check_mirai_daemons", m_daemons)
+  # Mock check_mirai_installed and check_mirai_daemons
+  local_mocked_bindings(
+    check_mirai_installed = function() TRUE,
+    check_mirai_daemons = function() 2
+  )
   
   # "auto" should return TRUE
   expect_true(should_use_parallel("auto"))
