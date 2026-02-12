@@ -10,7 +10,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/Mosquito-Alert/mosquitoR/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/Mosquito-Alert/mosquitoR/blob/v0.0.0.9000/DESCRIPTION)
 
 Palmer J, Johnson O (2026). *mosquitoR: An R Toolkit for Analyzing
 Mosquito Data from Citizen Science and Traditional Surveillance*. R
